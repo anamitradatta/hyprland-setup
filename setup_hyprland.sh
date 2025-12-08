@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Author: Anamitra Datta
+
 # script for custom hyprland setup
 # script is currently only supported for arch linux. 
 # it assumes hyprland has already been installed and is currently running
