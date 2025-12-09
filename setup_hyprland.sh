@@ -17,7 +17,6 @@ set -e
 log_error() 
 {
     echo -e "\e[31mERROR: $1\e[0m" >&2
-	return 1
 }
 
 log_warning()
@@ -47,17 +46,21 @@ check_os()
 	source /etc/os-release
 	if [[ "$ID" != "arch" ]]; then
     	log_error "Hyprland setup only allowed on Arch Linux. Other distros have not been tested"
+		return 1
 	else
 	    log_success "Arch Linux detected. Proceeding with Hyprland custom setup..."
+		return 0
 	fi
 }
 
 check_hyprland()
 {
 	if [[ "$XDG_SESSION_TYPE" == "wayland" && -n "$HYPRLAND_INSTANCE_SIGNATURE" ]]; then
-    	log_success "Running in Hyprland. Proceeding with Hyprland custom setup... "
+    	log_success "Running in Hyprland. Proceeding with Hyprland custom setup..."
+		return 0
 	else
     	log_error "Not running in Hyprland. The script requires Hyprland to be installed and running"
+		return 1
 	fi
 }
 
@@ -66,9 +69,10 @@ check_root()
     if [[ $EUID -ne 0 ]]; then
         log_error "This script must be run as root"
         return 1
-    fi
-	log_debug "Script is being run as root"
-	return 0
+    else
+		log_debug "Script is being run as root"
+		return 0
+	fi
 }
 
 check_prerequisites()
@@ -100,10 +104,13 @@ install_pacman_package()
     	pacman -S --needed --noconfirm $1
 		if [[ $? -ne 0 ]]; then
 			log_error "Error occurred while installing $1 using pacman"
+			return 1
     	else
 	    	log_success "Installed $1 using pacman"
+			return 0
     	fi
     fi
+	return 0
 }
 
 install_pacman_packages()
