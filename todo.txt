@@ -1,0 +1,52 @@
+install yay
+
+install packages:
+  - bash-completion
+  - curl
+  - zsh
+  - pulseaudio
+  - brightnessctl
+  - waybar
+  - hyprlock
+  - hyprpaper
+  - hypridle
+  - wlogout
+  - google-chrome
+  - 7zip
+  - gvim
+  - gedit
+  - vscode
+  - informant
+  - openssh
+  - pavucontrol
+
+aliases:
+  - add custom zsh and bash aliases
+
+fonts:
+  - install custom fonts
+
+terminal:
+  - check if kitty is installed 
+  - use preset kitty theme
+  - install oh-my-zsh including autocomplete and suggestions and syntax highlighting and use custom theme
+
+wallpaper:
+  - add custom wallpaper
+
+hyprland configurations:
+  - hyprlock
+  - hyprland
+  - hyprpaper
+  - hypridle
+
+set up custom vimrc
+
+set up custom waybar
+
+enable services:
+  - docker
+  - openssh
+
+load docker containers:
+  - ros2 jazzy
