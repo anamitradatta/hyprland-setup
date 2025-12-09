@@ -4,7 +4,11 @@
 
 # script for custom hyprland setup
 # script is currently only supported for arch linux. 
-# it assumes hyprland has already been installed and is currently running
+
+# it assumes the following have already been installed:
+# - hyprland
+# - git
+# - kitty
 
 set -e
 
@@ -14,6 +18,11 @@ log_error()
 {
     echo -e "\e[31mERROR: $1\e[0m" >&2
 	return 1
+}
+
+log_warning()
+{
+	echo -e "\e[33mWARNING: $1\e[0m"
 }
 
 log_success()
@@ -72,44 +81,54 @@ check_prerequisites()
 
 #################### INSTALL FUNCTIONS ####################
 
-is_installed()
+is_installed_by_pacman()
 {
-    if ! command -v $1 >/dev/null 2>&1; then
-        log_debug "$1 is not installed"
-        return 1
-    fi
-
-    log_debug "$1 is installed"
-    return 0
+	if pacman -Q $1 >/dev/null 2>&1; then
+    	log_success "$1 is installed by pacman"
+		return 0
+	else
+    	log_debug "$1 is not installed by pacman"
+		return 1
+	fi
 }
 
-install_package()
+install_pacman_package()
 {
-    if ! is_installed $1; then
-    	log_debug "Installing $1..."
+    log_debug "Install pacman package: $1"
+    if ! is_installed_by_pacman $1; then
+    	log_debug "Installing $1 with pacman..."
     	pacman -S --needed --noconfirm $1
 		if [[ $? -ne 0 ]]; then
-			log_error "Error occurred while installing $1"
+			log_error "Error occurred while installing $1 using pacman"
     	else
-	    	log_success "Installed $1"
+	    	log_success "Installed $1 using pacman"
     	fi
     fi
 }
 
-install_packages()
+install_pacman_packages()
 {
-    log "Installing packages..."
+    log "Installing pacman packages..."
 
-    install_package vim
-    install_package docker
-}
+	PACKAGES=(
+    	bash-completion
+    	zsh
+		pavucontrol
+		brightnessctl
+    	curl
+		p7zip
+    	vim
+    	gvim
+    	gedit
+    	code
+    	openssh
+    	docker
+		waybar
+	)
 
-#################### SETUP FUNCTIONS ####################
-
-setup()
-{
-    log "Setting up hyprland configuration..."
-    install_packages
+	for pkg in "${PACKAGES[@]}"; do
+    	install_pacman_package "$pkg"
+	done
 }
 
 #################### MAIN ####################
@@ -118,8 +137,9 @@ main()
 {
     log "Setting up custom Hyprland configuration"	
 	check_prerequisites
-	setup
-	log_success "Setting up custom Hyprland configuration complete. Please reboot"
+	install_pacman_packages
+	log_success "Setting up custom Hyprland configuration complete!"
+	log_warning "Please reboot!"
 }
 
 # run as sudo -E ./setup_hyprland.sh
