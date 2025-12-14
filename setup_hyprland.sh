@@ -138,6 +138,35 @@ install_pacman_packages()
 	done
 }
 
+#################### SERVICES ####################
+
+enable_ssh()
+{
+	log_debug "Enabling ssh"
+	if is_installed_by_pacman openssh; then
+		systemctl enable sshd
+	else
+		log_warning "openssh is not installed, cannot enable ssh"
+	fi
+}
+
+enable_docker()
+{
+	log_debug "Enabling docker"
+	if is_installed_by_pacman docker; then
+		systemctl enable docker
+	else
+		log_warning "docker is not installed, cannot enable docker"
+	fi
+}
+
+enable_services()
+{
+	log "Enabling services..."
+	enable_ssh
+	enable_docker
+}
+
 #################### MAIN ####################
 
 main()
@@ -145,6 +174,7 @@ main()
     log "Setting up custom Hyprland configuration"	
 	check_prerequisites
 	install_pacman_packages
+	enable_services
 	log_success "Setting up custom Hyprland configuration complete!"
 	log_warning "Please reboot!"
 }
