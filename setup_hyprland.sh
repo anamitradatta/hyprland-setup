@@ -10,7 +10,12 @@
 # - git
 # - kitty
 
-set -e
+# please run this script within the hyprland_setup directory
+
+set -euo pipefail
+
+# uncomment for debugging purposes
+#set -x
 
 #################### LOGGING FUNCTIONS ####################
 
@@ -140,31 +145,39 @@ install_pacman_packages()
 
 #################### SERVICES ####################
 
-enable_ssh()
+enable_service()
 {
-	log_debug "Enabling ssh"
-	if is_installed_by_pacman openssh; then
-		systemctl enable sshd
-	else
-		log_warning "openssh is not installed, cannot enable ssh"
-	fi
-}
+	log_debug "Enabling service: $1"
 
-enable_docker()
-{
-	log_debug "Enabling docker"
-	if is_installed_by_pacman docker; then
-		systemctl enable docker
+	declare -A SERVICE_MAP=(
+		[docker]="docker"
+		[openssh]="sshd"
+	)
+
+	local name="$1"
+	name="${name,,}"  # case-insensitive
+
+	if [[ -z "${SERVICE_MAP[$name]:-}" ]]; then
+		log_error "Unknown service: $name"
+		return 1
+	fi
+
+	local unit="${SERVICE_MAP[$name]}"
+
+	if systemctl enable $unit; then
+		log_success "$unit service enabled successfully"
+		return 0
 	else
-		log_warning "docker is not installed, cannot enable docker"
+		log_error "Failed to enable service $unit"
+		return 1
 	fi
 }
 
 enable_services()
 {
 	log "Enabling services..."
-	enable_ssh
-	enable_docker
+	enable_service "docker"
+	enable_service "openssh"
 }
 
 #################### MAIN ####################
