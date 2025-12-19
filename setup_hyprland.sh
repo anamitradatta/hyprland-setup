@@ -147,28 +147,16 @@ install_pacman_packages()
 
 enable_service()
 {
-	log_debug "Enabling service: $1"
+	local service="$1"
+	service="${service,,}"  # case-insensitive
 
-	declare -A SERVICE_MAP=(
-		[docker]="docker"
-		[openssh]="sshd"
-	)
+	log_debug "Enabling service: $service"
 
-	local name="$1"
-	name="${name,,}"  # case-insensitive
-
-	if [[ -z "${SERVICE_MAP[$name]:-}" ]]; then
-		log_error "Unknown service: $name"
-		return 1
-	fi
-
-	local unit="${SERVICE_MAP[$name]}"
-
-	if systemctl enable $unit; then
-		log_success "$unit service enabled successfully"
+	if systemctl enable $service; then
+		log_success "$service service enabled successfully"
 		return 0
 	else
-		log_error "Failed to enable service $unit"
+		log_error "Failed to enable service $service"
 		return 1
 	fi
 }
@@ -177,7 +165,7 @@ enable_services()
 {
 	log "Enabling services..."
 	enable_service "docker"
-	enable_service "openssh"
+	enable_service "sshd"
 }
 
 #################### MAIN ####################
