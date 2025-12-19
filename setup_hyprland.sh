@@ -17,6 +17,13 @@ set -euo pipefail
 # uncomment for debugging purposes
 #set -x
 
+#################### CONSTANTS ####################
+
+# Configurations
+CONFIGS_DIR=$(pwd)/configs
+VIM_CONFIG_DIR=$CONFIGS_DIR/vim
+CUSTOM_VIM_CONFIG_FILE=$VIM_CONFIG_DIR/.vimrc
+
 #################### LOGGING FUNCTIONS ####################
 
 log_error() 
@@ -80,12 +87,24 @@ check_root()
 	fi
 }
 
+check_configs()
+{
+	if [[ -d $CONFIGS_DIR ]]; then
+		log_success "Found custom configurations directory"
+		return 0
+	else
+		log_error "Could not find custom configurations directory"
+		return 1
+	fi
+}
+
 check_prerequisites()
 {
 	log "Checking prerequisites..."
 	check_root
 	check_os
 	check_hyprland
+	check_configs
 }
 
 #################### INSTALL FUNCTIONS ####################
@@ -143,6 +162,40 @@ install_pacman_packages()
 	done
 }
 
+#################### CONFIGURATIONS ####################
+
+set_up_config_file()
+{
+	log_debug "Setting up custom config file $1 in destination directory $2"
+
+	if [[ ! -f $1 ]]; then
+		log_warning "Cannot find custom config file $1. Skipping custom config file setup"
+		return 0
+	fi
+
+	if [[ ! -d $2 ]]; then
+		log_warning "Cannot find custom config file destination directory $2 for file $1. Skipping custom config file setup"
+		return 0
+	fi
+
+	cp $1 $2
+	if [[ $? -eq 0 ]]; then
+		log_success "Custom config file $1 was set successfully in directory $2"
+		return 0
+	else
+		log_error "Custom config file $1 was not set successfully in directory $2"
+		return 1
+	fi
+}
+
+set_up_configurations()
+{
+	log "Setting up custom configurations..."
+	
+	# vimrc
+	set_up_config_file $CUSTOM_VIM_CONFIG_FILE $HOME
+}
+
 #################### SERVICES ####################
 
 enable_service()
@@ -175,6 +228,7 @@ main()
     log "Setting up custom Hyprland configuration"	
 	check_prerequisites
 	install_pacman_packages
+	set_up_configurations
 	enable_services
 	log_success "Setting up custom Hyprland configuration complete!"
 	log_warning "Please reboot!"

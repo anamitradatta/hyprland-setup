@@ -28,8 +28,6 @@ hyprland configurations:
   - hyprpaper
   - hypridle
 
-set up custom vimrc
-
 set up custom waybar
 
 load docker containers:
