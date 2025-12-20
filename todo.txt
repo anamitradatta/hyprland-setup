@@ -8,9 +8,6 @@ install packages:
   - google-chrome
   - informant
 
-aliases:
-  - add custom zsh and bash aliases
-
 fonts:
   - install custom fonts
 

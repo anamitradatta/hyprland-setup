@@ -23,6 +23,9 @@ set -euo pipefail
 CONFIGS_DIR=$(pwd)/configs
 VIM_CONFIG_DIR=$CONFIGS_DIR/vim
 CUSTOM_VIM_CONFIG_FILE=$VIM_CONFIG_DIR/.vimrc
+SHELL_CONFIG_DIR=$CONFIGS_DIR/shell
+CUSTOM_BASH_CONFIG_FILE=$SHELL_CONFIG_DIR/.bashrc
+CUSTOM_ZSH_CONFIG_FILE=$SHELL_CONFIG_DIR/.zshrc
 
 #################### LOGGING FUNCTIONS ####################
 
@@ -188,12 +191,43 @@ set_up_config_file()
 	fi
 }
 
+change_shell_to_zsh()
+{
+	log_debug "Changing shell to zsh"
+	local ZSH_PATH
+
+	if ! ZSH_PATH="$(command -v zsh 2>/dev/null)"; then
+		log_warning "zsh is not installed. Skipping changing shell to zsh"
+		return 0
+	fi
+
+	if [[ "$SHELL" != "$ZSH_PATH" ]]; then
+		if chsh -s "$ZSH_PATH"; then
+			log_success "Default shell changed to zsh"
+			return 0
+		else
+			log_error "Failed to change default shell to zsh"
+			return 1
+		fi
+	fi
+
+	log_debug "Default shell is already zsh"
+	return 0
+}
+
 set_up_configurations()
 {
 	log "Setting up custom configurations..."
 	
 	# vimrc
 	set_up_config_file $CUSTOM_VIM_CONFIG_FILE $HOME
+
+	# bashrc
+	set_up_config_file $CUSTOM_BASH_CONFIG_FILE $HOME
+
+	# zshrc
+	set_up_config_file $CUSTOM_ZSH_CONFIG_FILE $HOME
+	change_shell_to_zsh
 }
 
 #################### SERVICES ####################
