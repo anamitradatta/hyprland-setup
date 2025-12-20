@@ -303,8 +303,29 @@ enable_services()
 
 #################### MAIN ####################
 
+prompt_start() 
+{
+	while true; do
+		read -rp "Would you like to run the custom hyprland setup script? [y/n]: " answer
+		case "$answer" in
+			[yY]|[yY][eE][sS])
+    			log "Setting up custom Hyprland configuration"	
+				break
+				;;
+			[nN]|[nN][oO]|"")
+				log "Exiting setting up custom Hyprland configuration"
+				exit 0
+				;;
+			*)
+				log_warning "Please answer yes or no."
+				;;
+		esac
+	done
+}
+
 prompt_reboot() 
 {
+	log_success "Setting up custom Hyprland configuration complete!"
 	while true; do
 		read -rp "Reboot system now? [y/n]: " answer
 		case "$answer" in
@@ -326,12 +347,11 @@ prompt_reboot()
 
 main()
 {
-    log "Setting up custom Hyprland configuration"	
+	prompt_start
 	check_prerequisites
 	install_pacman_packages
 	set_up_configurations
 	enable_services
-	log_success "Setting up custom Hyprland configuration complete!"
 	prompt_reboot
 }
 
