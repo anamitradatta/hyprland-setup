@@ -257,6 +257,27 @@ enable_services()
 
 #################### MAIN ####################
 
+prompt_reboot() 
+{
+	while true; do
+		read -rp "Reboot system now? [y/n]: " answer
+		case "$answer" in
+			[yY]|[yY][eE][sS])
+				log "Rebooting..."
+				reboot
+				break
+				;;
+			[nN]|[nN][oO]|"")
+				log "Reboot skipped."
+				break
+				;;
+			*)
+				log_warning "Please answer yes or no."
+				;;
+		esac
+	done
+}
+
 main()
 {
     log "Setting up custom Hyprland configuration"	
@@ -265,7 +286,7 @@ main()
 	set_up_configurations
 	enable_services
 	log_success "Setting up custom Hyprland configuration complete!"
-	log_warning "Please reboot!"
+	prompt_reboot
 }
 
 # run as sudo -E ./setup_hyprland.sh
