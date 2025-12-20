@@ -306,7 +306,7 @@ enable_services()
 prompt_start() 
 {
 	while true; do
-		read -rp "Would you like to run the custom hyprland setup script? [y/n]: " answer
+		read -rp "Would you like to run the custom Hyprland setup script? [y/n]: " answer
 		case "$answer" in
 			[yY]|[yY][eE][sS])
     			log "Setting up custom Hyprland configuration"	
