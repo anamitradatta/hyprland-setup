@@ -239,7 +239,7 @@ set_up_lock_handle_lid_switch()
 		return 0
 	fi
 
-	sed -i 's/^[[:space:]]*#\?\s*HandleLidSwitch=.*/HandleLidSwitch=lock/' /etc/systemd/logind.conf
+	sed -i 's/^[[:space:]]*#\?\s*HandleLidSwitch=.*/HandleLidSwitch=lock/' $LOGIND_CONF
 	SED_RC=$?
 
 	if [[ $SED_RC -ne 0 ]]; then
