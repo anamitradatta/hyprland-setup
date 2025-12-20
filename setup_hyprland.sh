@@ -223,6 +223,34 @@ change_shell_to_zsh()
 	return 0
 }
 
+set_up_lock_handle_lid_switch()
+{
+	log_debug "Setting up HandleLidSwitch to lock"
+
+	LOGIND_CONF=/etc/systemd/logind.conf
+
+	if [[ ! -f "$LOGIND_CONF" ]]; then
+		log_warning "$LOGIND_CONF does not exist. Skipping setting HandleLidSwitch to lock"
+		return 0
+	fi
+
+	if [[ ! -w "$LOGIND_CONF" ]]; then
+		log_warning "$LOGIND_CONF is not writable. Skipping setting HandleLidSwitch to lock"
+		return 0
+	fi
+
+	sed -i 's/^[[:space:]]*#\?\s*HandleLidSwitch=.*/HandleLidSwitch=lock/' /etc/systemd/logind.conf
+	SED_RC=$?
+
+	if [[ $SED_RC -ne 0 ]]; then
+		log_error "Failed to update HandleLidSwitch in $LOGIND_CONF (sed exit code: $SED_RC)"
+		return 1
+	else
+		log_success "Updated HandleLidSwitch to lock in $LOGIND_CONF"
+		return 0
+	fi
+}
+
 set_up_configurations()
 {
 	log "Setting up custom configurations..."
@@ -242,6 +270,7 @@ set_up_configurations()
 
 	# hyprlock conf
 	set_up_config_file $CUSTOM_HYPRLOCK_CONFIG_FILE $HYPRLAND_CONFIG_DIR
+	set_up_lock_handle_lid_switch
 
 	# hypridle conf
 	set_up_config_file $CUSTOM_HYPRIDLE_CONFIG_FILE $HYPRLAND_CONFIG_DIR

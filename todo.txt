@@ -26,5 +26,3 @@ set up custom waybar
 
 load docker containers:
   - ros2 jazzy
-
-set up config to lock laptop when lid is closed
