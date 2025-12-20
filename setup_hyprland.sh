@@ -19,13 +19,21 @@ set -euo pipefail
 
 #################### CONSTANTS ####################
 
-# Configurations
+# Hyprland configurations
+HOME_CONFIG_DIR=$HOME/.config
+HYPRLAND_CONFIG_DIR=$HOME_CONFIG_DIR/hypr
+
+# Custom Configurations
 CONFIGS_DIR=$(pwd)/configs
 VIM_CONFIG_DIR=$CONFIGS_DIR/vim
 CUSTOM_VIM_CONFIG_FILE=$VIM_CONFIG_DIR/.vimrc
 SHELL_CONFIG_DIR=$CONFIGS_DIR/shell
 CUSTOM_BASH_CONFIG_FILE=$SHELL_CONFIG_DIR/.bashrc
 CUSTOM_ZSH_CONFIG_FILE=$SHELL_CONFIG_DIR/.zshrc
+CUSTOM_HYPRLAND_CONFIG_DIR=$CONFIGS_DIR/hyprland
+CUSTOM_HYPRLAND_CONFIG_FILE=$CUSTOM_HYPRLAND_CONFIG_DIR/hyprland.conf
+CUSTOM_HYPRLOCK_CONFIG_FILE=$CUSTOM_HYPRLAND_CONFIG_DIR/hyprlock.conf
+CUSTOM_HYPRIDLE_CONFIG_FILE=$CUSTOM_HYPRLAND_CONFIG_DIR/hypridle.conf
 
 #################### LOGGING FUNCTIONS ####################
 
@@ -228,6 +236,15 @@ set_up_configurations()
 	# zshrc
 	set_up_config_file $CUSTOM_ZSH_CONFIG_FILE $HOME
 	change_shell_to_zsh
+
+	# hyprland conf
+	set_up_config_file $CUSTOM_HYPRLAND_CONFIG_FILE $HYPRLAND_CONFIG_DIR
+
+	# hyprlock conf
+	set_up_config_file $CUSTOM_HYPRLOCK_CONFIG_FILE $HYPRLAND_CONFIG_DIR
+
+	# hypridle conf
+	set_up_config_file $CUSTOM_HYPRIDLE_CONFIG_FILE $HYPRLAND_CONFIG_DIR
 }
 
 #################### SERVICES ####################
