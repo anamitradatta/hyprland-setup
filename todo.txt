@@ -8,9 +8,6 @@ install packages:
   - google-chrome
   - informant
 
-fonts:
-  - install custom fonts
-
 terminal:
   - check if kitty is installed 
   - use preset kitty theme

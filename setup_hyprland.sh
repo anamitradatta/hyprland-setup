@@ -17,23 +17,31 @@ set -euo pipefail
 # uncomment for debugging purposes
 #set -x
 
+#################### FLAGS ####################
+
+ENABLE_DEBUG=false
+
 #################### CONSTANTS ####################
 
-# Hyprland configurations
 HOME_CONFIG_DIR=$HOME/.config
 HYPRLAND_CONFIG_DIR=$HOME_CONFIG_DIR/hypr
+LOCAL_SHARE_DIR=$HOME/.local/share
+LOCAL_FONTS_DIR=$LOCAL_SHARE_DIR/fonts
 
 # Custom Configurations
-CONFIGS_DIR=$(pwd)/configs
-VIM_CONFIG_DIR=$CONFIGS_DIR/vim
-CUSTOM_VIM_CONFIG_FILE=$VIM_CONFIG_DIR/.vimrc
-SHELL_CONFIG_DIR=$CONFIGS_DIR/shell
-CUSTOM_BASH_CONFIG_FILE=$SHELL_CONFIG_DIR/.bashrc
-CUSTOM_ZSH_CONFIG_FILE=$SHELL_CONFIG_DIR/.zshrc
-CUSTOM_HYPRLAND_CONFIG_DIR=$CONFIGS_DIR/hyprland
+CUSTOM_CONFIGS_DIR=$(pwd)/configs
+CUSTOM_VIM_CONFIG_DIR=$CUSTOM_CONFIGS_DIR/vim
+CUSTOM_VIM_CONFIG_FILE=$CUSTOM_VIM_CONFIG_DIR/.vimrc
+CUSTOM_SHELL_CONFIG_DIR=$CUSTOM_CONFIGS_DIR/shell
+CUSTOM_BASH_CONFIG_FILE=$CUSTOM_SHELL_CONFIG_DIR/.bashrc
+CUSTOM_ZSH_CONFIG_FILE=$CUSTOM_SHELL_CONFIG_DIR/.zshrc
+CUSTOM_HYPRLAND_CONFIG_DIR=$CUSTOM_CONFIGS_DIR/hyprland
 CUSTOM_HYPRLAND_CONFIG_FILE=$CUSTOM_HYPRLAND_CONFIG_DIR/hyprland.conf
 CUSTOM_HYPRLOCK_CONFIG_FILE=$CUSTOM_HYPRLAND_CONFIG_DIR/hyprlock.conf
 CUSTOM_HYPRIDLE_CONFIG_FILE=$CUSTOM_HYPRLAND_CONFIG_DIR/hypridle.conf
+
+# Custom fonts
+CUSTOM_FONTS_DIR=$(pwd)/fonts
 
 #################### LOGGING FUNCTIONS ####################
 
@@ -54,7 +62,9 @@ log_success()
 
 log_debug()
 {
-    echo -e "\e[36mDEBUG: $1\e[0m"
+	if [[ "$ENABLE_DEBUG" = true ]]; then
+		echo -e "\e[36mDEBUG: $1\e[0m"
+	fi
 }
 
 log()
@@ -100,7 +110,7 @@ check_root()
 
 check_configs()
 {
-	if [[ -d $CONFIGS_DIR ]]; then
+	if [[ -d $CUSTOM_CONFIGS_DIR ]]; then
 		log_success "Found custom configurations directory"
 		return 0
 	else
@@ -116,6 +126,7 @@ check_prerequisites()
 	check_os
 	check_hyprland
 	check_configs
+	log_success "Checked all prerequisites. Proceeding with custom Hyprland setup"
 }
 
 #################### INSTALL FUNCTIONS ####################
@@ -123,7 +134,7 @@ check_prerequisites()
 is_installed_by_pacman()
 {
 	if pacman -Q $1 >/dev/null 2>&1; then
-    	log_success "$1 is installed by pacman"
+		log_success "$1 is already installed"
 		return 0
 	else
     	log_debug "$1 is not installed by pacman"
@@ -171,6 +182,8 @@ install_pacman_packages()
 	for pkg in "${PACKAGES[@]}"; do
     	install_pacman_package "$pkg"
 	done
+
+	log_success "Installed all pacman packages"
 }
 
 #################### CONFIGURATIONS ####################
@@ -274,6 +287,28 @@ set_up_configurations()
 
 	# hypridle conf
 	set_up_config_file $CUSTOM_HYPRIDLE_CONFIG_FILE $HYPRLAND_CONFIG_DIR
+
+	log_success "Set up custom configurations"
+}
+
+#################### FONTS ####################
+
+install_fonts()
+{
+	log "Installing custom fonts..."
+	if [[ ! -d $CUSTOM_FONTS_DIR ]]; then
+		log_warning "Cannot find custom fonts directory. Skipping custom installation of fonts"
+		return 0
+	fi
+
+	if [[ ! -d $LOCAL_FONTS_DIR ]]; then
+		log_warning "Cannot find local fonts directory. Skipping custom installation of fonts"
+		return 0
+	fi
+
+	cp -r $CUSTOM_FONTS_DIR/* $LOCAL_FONTS_DIR
+	log_success "Installed custom fonts"
+	return 0
 }
 
 #################### SERVICES ####################
@@ -299,6 +334,7 @@ enable_services()
 	log "Enabling services..."
 	enable_service "docker"
 	enable_service "sshd"
+	log_success "All services enabled"
 }
 
 #################### MAIN ####################
@@ -321,6 +357,24 @@ prompt_start()
 				;;
 		esac
 	done
+}
+
+parse_flags()
+{
+	OPTIND=1
+	while getopts ":d" opt; do
+		case $opt in
+			d)
+				log_debug "Debug mode was enabled"
+				ENABLE_DEBUG=true
+				;;
+			\?)
+				log_error "Invalid option provided: -$OPTARG"
+				exit 1
+				;;
+		esac
+	done
+	shift $((OPTIND - 1))
 }
 
 prompt_reboot() 
@@ -347,13 +401,15 @@ prompt_reboot()
 
 main()
 {
+	parse_flags "$@"
 	prompt_start
 	check_prerequisites
 	install_pacman_packages
 	set_up_configurations
+	install_fonts
 	enable_services
 	prompt_reboot
 }
 
 # run as sudo -E ./setup_hyprland.sh
-main
+main "$@"
