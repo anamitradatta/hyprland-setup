@@ -177,6 +177,7 @@ install_pacman_packages()
     	openssh
     	docker
 		waybar
+		firefox
 	)
 
 	for pkg in "${PACKAGES[@]}"; do
