@@ -367,8 +367,8 @@ parse_flags()
 	while getopts ":d" opt; do
 		case $opt in
 			d)
-				log_debug "Debug mode was enabled"
 				ENABLE_DEBUG=true
+				log_debug "Debug mode was enabled"
 				;;
 			\?)
 				log_error "Invalid option provided: -$OPTARG"
