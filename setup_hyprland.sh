@@ -178,6 +178,7 @@ install_pacman_packages()
     	docker
 		waybar
 		firefox
+		strace
 	)
 
 	for pkg in "${PACKAGES[@]}"; do
