@@ -27,18 +27,30 @@ HOME_CONFIG_DIR=$HOME/.config
 HYPRLAND_CONFIG_DIR=$HOME_CONFIG_DIR/hypr
 LOCAL_SHARE_DIR=$HOME/.local/share
 LOCAL_FONTS_DIR=$LOCAL_SHARE_DIR/fonts
+LOCAL_WAYBAR_CONFIG_DIR=$HOME_CONFIG_DIR/waybar
 
-# Custom Configurations
+# Custom configurations
 CUSTOM_CONFIGS_DIR=$(pwd)/configs
+
+# Vim configuration
 CUSTOM_VIM_CONFIG_DIR=$CUSTOM_CONFIGS_DIR/vim
 CUSTOM_VIM_CONFIG_FILE=$CUSTOM_VIM_CONFIG_DIR/.vimrc
+
+# Shell configurations
 CUSTOM_SHELL_CONFIG_DIR=$CUSTOM_CONFIGS_DIR/shell
 CUSTOM_BASH_CONFIG_FILE=$CUSTOM_SHELL_CONFIG_DIR/.bashrc
 CUSTOM_ZSH_CONFIG_FILE=$CUSTOM_SHELL_CONFIG_DIR/.zshrc
+
+# Hyprland configurations
 CUSTOM_HYPRLAND_CONFIG_DIR=$CUSTOM_CONFIGS_DIR/hyprland
 CUSTOM_HYPRLAND_CONFIG_FILE=$CUSTOM_HYPRLAND_CONFIG_DIR/hyprland.conf
 CUSTOM_HYPRLOCK_CONFIG_FILE=$CUSTOM_HYPRLAND_CONFIG_DIR/hyprlock.conf
 CUSTOM_HYPRIDLE_CONFIG_FILE=$CUSTOM_HYPRLAND_CONFIG_DIR/hypridle.conf
+
+# Waybar configuration
+CUSTOM_WAYBAR_CONFIG_DIR=$CUSTOM_CONFIGS_DIR/waybar
+CUSTOM_WAYBAR_CONFIG_JSONC_FILE=$CUSTOM_WAYBAR_CONFIG_DIR/config.jsonc
+CUSTOM_WAYBAR_CONFIG_STYLE_CSS_FILE=$CUSTOM_WAYBAR_CONFIG_DIR/style.css
 
 # Custom fonts
 CUSTOM_FONTS_DIR=$(pwd)/fonts
@@ -70,6 +82,66 @@ log_debug()
 log()
 {
     echo -e "\e[34m$1\e[0m"
+}
+
+#################### UTILITY FUNCTIONS ####################
+
+make_directory()
+{
+	local dir_path="$1"
+	local user_name="$2"
+	local perms="$3"
+	log_debug "Making directory '$dir_path' owned by '$user_name' with permissions '$perms'"
+
+	if [[ -z "$dir_path" ]]; then
+		log_error "Directory path is required. Unable to create directory '$dir_path'"
+		return 1
+	fi
+
+	if [[ -z "$user_name" ]]; then
+		log_error "Username is required. Unable to create directory '$dir_path'"
+		return 1
+	fi
+
+	if [[ -z "$perms" ]]; then
+		log_error "Permissions are required. Unable to create directory '$dir_path'"
+		return 1
+	fi
+
+	# Check if user exists
+	if  ! id "$user_name" >/dev/null 2>&1; then
+		log_error "User '$user_name' does not exist. Unable to create directory '$dir_path'"
+		return 1
+	fi
+
+	# Validate octal permissions (exactly 3 digits, 000–777)
+	if [[ ! "$perms" =~ ^[0-7]{3}$ ]]; then
+		log_error "Invalid octal permissions given '$perms'. Unable to create directory '$dir_path'"
+		return 1
+	fi
+
+	if [[ ! -d "$dir_path" ]]; then
+		mkdir -p "$dir_path"
+		if [[ $? -ne 0 ]]; then
+			log_error "Failed to create directory '$dir_path'"
+			return 1
+		fi
+	fi
+
+	chown "$user_name":"$user_name" "$dir_path"
+	if [[ $? -ne 0 ]]; then
+		log_error "Failed to set ownership to '$user_name' on '$dir_path'"
+		return 1
+	fi
+
+	chmod "$perms" "$dir_path"
+	if [[ $? -ne 0 ]]; then
+		log_error "Failed to set permissions ('$perms') on '$dir_path'"
+		return 1
+	fi
+
+	log_debug "Successfully created directory '$dir_path'"
+	return 0
 }
 
 #################### PREREQUISITE CHECK FUNCTIONS ####################
@@ -266,6 +338,21 @@ set_up_lock_handle_lid_switch()
 	fi
 }
 
+set_up_waybar()
+{
+	log_debug "Setting up custom waybar"
+
+	if [[ ! -d $LOCAL_WAYBAR_CONFIG_DIR ]]; then
+		log_debug "Local waybar configuration directory does not exist. Creating..."
+		make_directory "$LOCAL_WAYBAR_CONFIG_DIR" "$SUDO_USER" "755"
+	fi
+
+	set_up_config_file $CUSTOM_WAYBAR_CONFIG_JSONC_FILE $LOCAL_WAYBAR_CONFIG_DIR
+	set_up_config_file $CUSTOM_WAYBAR_CONFIG_STYLE_CSS_FILE $LOCAL_WAYBAR_CONFIG_DIR
+
+	log_success "Successfully set up custom waybar"
+}
+
 set_up_configurations()
 {
 	log "Setting up custom configurations..."
@@ -289,6 +376,9 @@ set_up_configurations()
 
 	# hypridle conf
 	set_up_config_file $CUSTOM_HYPRIDLE_CONFIG_FILE $HYPRLAND_CONFIG_DIR
+
+	# waybar
+	set_up_waybar
 
 	log_success "Set up custom configurations"
 }

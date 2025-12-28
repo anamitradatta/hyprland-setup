@@ -6,7 +6,6 @@ install packages:
   - hypridle
   - wlogout
   - google-chrome
-  - informant
 
 terminal:
   - check if kitty is installed 
@@ -18,8 +17,6 @@ wallpaper:
 
 hyprland configurations:
   - hyprpaper
-
-set up custom waybar
 
 load docker containers:
   - ros2 jazzy
