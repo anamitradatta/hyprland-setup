@@ -1,9 +1,13 @@
 window {
-    background-color: darkslategray;
+    background-color: darkslategrey;
     opacity: 1.0;
     color: white;
     margin: 10px;
     border-radius: 10px;
+}
+
+image {
+	margin-right: 10px;
 }
 
 #entry {
