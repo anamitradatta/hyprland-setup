@@ -278,7 +278,7 @@ set_up_config_file()
 
 	cp $1 $2
 	if [[ $? -eq 0 ]]; then
-		log_success "Custom config file $1 was set successfully in directory $2"
+		log_debug "Custom config file $1 was set successfully in directory $2"
 		return 0
 	else
 		log_error "Custom config file $1 was not set successfully in directory $2"
@@ -350,7 +350,7 @@ set_up_waybar()
 	set_up_config_file $CUSTOM_WAYBAR_CONFIG_JSONC_FILE $LOCAL_WAYBAR_CONFIG_DIR
 	set_up_config_file $CUSTOM_WAYBAR_CONFIG_STYLE_CSS_FILE $LOCAL_WAYBAR_CONFIG_DIR
 
-	log_success "Successfully set up custom waybar"
+	log_success "Set up custom waybar"
 }
 
 set_up_configurations()
@@ -359,23 +359,31 @@ set_up_configurations()
 	
 	# vimrc
 	set_up_config_file $CUSTOM_VIM_CONFIG_FILE $HOME
+	log_success "Set up custom vim config"
 
 	# bashrc
 	set_up_config_file $CUSTOM_BASH_CONFIG_FILE $HOME
+	log_success "Set up custom bash config"
 
 	# zshrc
 	set_up_config_file $CUSTOM_ZSH_CONFIG_FILE $HOME
+	log_success "Set up custom zsh config"
+
 	change_shell_to_zsh
 
+	log "Setting up custom hyprland configurations..."
 	# hyprland conf
 	set_up_config_file $CUSTOM_HYPRLAND_CONFIG_FILE $HYPRLAND_CONFIG_DIR
+	log_success "Set up hyprland config"
 
 	# hyprlock conf
 	set_up_config_file $CUSTOM_HYPRLOCK_CONFIG_FILE $HYPRLAND_CONFIG_DIR
+	log_success "Set up hyprlock config"
 	set_up_lock_handle_lid_switch
 
 	# hypridle conf
 	set_up_config_file $CUSTOM_HYPRIDLE_CONFIG_FILE $HYPRLAND_CONFIG_DIR
+	log_success "Set up hypridle config"
 
 	# waybar
 	set_up_waybar
@@ -413,7 +421,7 @@ enable_service()
 	log_debug "Enabling service: $service"
 
 	if systemctl enable $service; then
-		log_success "$service service enabled successfully"
+		log_success "$service service enabled"
 		return 0
 	else
 		log_error "Failed to enable service $service"
