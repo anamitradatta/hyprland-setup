@@ -5,5 +5,5 @@ insensitive=true
 location=center
 hide_scroll=false
 gtk_dark=true
-prompt=Run
+prompt=Search...
 normal_window=true
