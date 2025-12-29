@@ -243,6 +243,7 @@ install_pacman_packages()
 
 	PACKAGES=(
     	bash-completion
+		man-db
     	zsh
 		pavucontrol
 		brightnessctl
