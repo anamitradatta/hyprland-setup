@@ -1,0 +1,9 @@
+allow_images=true
+image_size=40
+term=kitty
+insensitive=true
+location=center
+hide_scroll=false
+gtk_dark=true
+prompt=Run
+normal_window=true

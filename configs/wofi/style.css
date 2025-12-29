@@ -1,0 +1,21 @@
+window {
+    background-color: darkslategray;
+    opacity: 1.0;
+    color: white;
+    margin: 10px;
+    border-radius: 10px;
+}
+
+#entry {
+    padding: 5px;
+    border-radius: 5px;
+}
+
+#input {
+    margin: 10px;
+    border-radius: 5px;
+}
+
+#scroll {
+    margin-top: 10px;
+}

@@ -28,6 +28,7 @@ HYPRLAND_CONFIG_DIR=$HOME_CONFIG_DIR/hypr
 LOCAL_SHARE_DIR=$HOME/.local/share
 LOCAL_FONTS_DIR=$LOCAL_SHARE_DIR/fonts
 LOCAL_WAYBAR_CONFIG_DIR=$HOME_CONFIG_DIR/waybar
+LOCAL_WOFI_CONFIG_DIR=$HOME_CONFIG_DIR/wofi
 
 # Custom configurations
 CUSTOM_CONFIGS_DIR=$(pwd)/configs
@@ -51,6 +52,11 @@ CUSTOM_HYPRIDLE_CONFIG_FILE=$CUSTOM_HYPRLAND_CONFIG_DIR/hypridle.conf
 CUSTOM_WAYBAR_CONFIG_DIR=$CUSTOM_CONFIGS_DIR/waybar
 CUSTOM_WAYBAR_CONFIG_JSONC_FILE=$CUSTOM_WAYBAR_CONFIG_DIR/config.jsonc
 CUSTOM_WAYBAR_CONFIG_STYLE_CSS_FILE=$CUSTOM_WAYBAR_CONFIG_DIR/style.css
+
+# wofi configuration
+CUSTOM_WOFI_CONFIG_DIR=$CUSTOM_CONFIGS_DIR/wofi
+CUSTOM_WOFI_CONFIG_FILE=$CUSTOM_WOFI_CONFIG_DIR/config
+CUSTOM_WOFI_STYLE_CSS_FILE=$CUSTOM_WOFI_CONFIG_DIR/style.css
 
 # Custom fonts
 CUSTOM_FONTS_DIR=$(pwd)/fonts
@@ -249,6 +255,7 @@ install_pacman_packages()
     	openssh
     	docker
 		waybar
+		wofi
 		firefox
 		strace
 	)
@@ -338,9 +345,9 @@ set_up_lock_handle_lid_switch()
 	fi
 }
 
-set_up_waybar()
+set_up_waybar_config()
 {
-	log_debug "Setting up custom waybar"
+	log_debug "Setting up custom waybar configuration"
 
 	if [[ ! -d $LOCAL_WAYBAR_CONFIG_DIR ]]; then
 		log_debug "Local waybar configuration directory does not exist. Creating..."
@@ -350,7 +357,22 @@ set_up_waybar()
 	set_up_config_file $CUSTOM_WAYBAR_CONFIG_JSONC_FILE $LOCAL_WAYBAR_CONFIG_DIR
 	set_up_config_file $CUSTOM_WAYBAR_CONFIG_STYLE_CSS_FILE $LOCAL_WAYBAR_CONFIG_DIR
 
-	log_success "Set up custom waybar"
+	log_success "Set up custom waybar configuration"
+}
+
+set_up_wofi_config()
+{
+	log_debug "Setting up custom wofi configuration"
+
+	if [[ ! -d $LOCAL_WOFI_CONFIG_DIR ]]; then
+		log_debug "Local wofi configuration directory does not exist. Creating..."
+		make_directory "$LOCAL_WOFI_CONFIG_DIR" "$SUDO_USER" "755"
+	fi
+
+	set_up_config_file $CUSTOM_WOFI_CONFIG_FILE $LOCAL_WOFI_CONFIG_DIR
+	set_up_config_file $CUSTOM_WOFI_STYLE_CSS_FILE $LOCAL_WOFI_CONFIG_DIR
+
+	log_success "Set up custom wofi configuration"
 }
 
 set_up_configurations()
@@ -386,7 +408,10 @@ set_up_configurations()
 	log_success "Set up hypridle config"
 
 	# waybar
-	set_up_waybar
+	set_up_waybar_config
+
+	# wofi
+	set_up_wofi_config
 
 	log_success "Set up custom configurations"
 }
