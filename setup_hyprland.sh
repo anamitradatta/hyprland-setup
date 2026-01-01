@@ -29,6 +29,7 @@ LOCAL_SHARE_DIR=$HOME/.local/share
 LOCAL_FONTS_DIR=$LOCAL_SHARE_DIR/fonts
 LOCAL_WAYBAR_CONFIG_DIR=$HOME_CONFIG_DIR/waybar
 LOCAL_WOFI_CONFIG_DIR=$HOME_CONFIG_DIR/wofi
+LOCAL_WALLPAPERS_DIR=$LOCAL_SHARE_DIR/wallpapers
 
 # Custom configurations
 CUSTOM_CONFIGS_DIR=$(pwd)/configs
@@ -47,6 +48,7 @@ CUSTOM_HYPRLAND_CONFIG_DIR=$CUSTOM_CONFIGS_DIR/hyprland
 CUSTOM_HYPRLAND_CONFIG_FILE=$CUSTOM_HYPRLAND_CONFIG_DIR/hyprland.conf
 CUSTOM_HYPRLOCK_CONFIG_FILE=$CUSTOM_HYPRLAND_CONFIG_DIR/hyprlock.conf
 CUSTOM_HYPRIDLE_CONFIG_FILE=$CUSTOM_HYPRLAND_CONFIG_DIR/hypridle.conf
+CUSTOM_HYPRPAPER_CONFIG_FILE=$CUSTOM_HYPRLAND_CONFIG_DIR/hyprpaper.conf
 
 # Waybar configuration
 CUSTOM_WAYBAR_CONFIG_DIR=$CUSTOM_CONFIGS_DIR/waybar
@@ -60,6 +62,10 @@ CUSTOM_WOFI_STYLE_CSS_FILE=$CUSTOM_WOFI_CONFIG_DIR/style.css
 
 # Custom fonts
 CUSTOM_FONTS_DIR=$(pwd)/fonts
+
+# Custom wallpapers
+CUSTOM_WALLPAPERS_DIR=$(pwd)/wallpapers
+CUSTOM_WALLPAPERS_FILE=$CUSTOM_WALLPAPERS_DIR/wallpaper.png
 
 #################### LOGGING FUNCTIONS ####################
 
@@ -408,6 +414,10 @@ set_up_configurations()
 	set_up_config_file $CUSTOM_HYPRIDLE_CONFIG_FILE $HYPRLAND_CONFIG_DIR
 	log_success "Set up hypridle config"
 
+	# hyprpaper conf
+	set_up_config_file $CUSTOM_HYPRPAPER_CONFIG_FILE $HYPRLAND_CONFIG_DIR
+	log_success "Set up hyprpaper config"
+
 	# waybar
 	set_up_waybar_config
 
@@ -433,8 +443,46 @@ install_fonts()
 	fi
 
 	cp -r $CUSTOM_FONTS_DIR/* $LOCAL_FONTS_DIR
-	log_success "Installed custom fonts"
-	return 0
+
+	if [[ $? -eq 0 ]]; then
+		log_debug "Successfully copied custom fonts to $LOCAL_FONTS_DIR"
+	else
+		log_warning "Failed to copy custom fonts to $LOCAL_FONTS_DIR. Skipping custom installation of fonts"
+		return 0
+	fi
+
+	# Update fonts cache
+	fc-cache -fv
+
+	if [[ $? -eq 0 ]]; then
+		log_success "Installed custom fonts"
+		return 0
+	else
+		log_error "Failed to install custom fonts"
+		return 1
+	fi
+}
+
+#################### WALLPAPERS ####################
+
+add_wallpapers()
+{
+	log "Adding custom wallpapers..."
+
+	if [[ ! -d $LOCAL_WALLPAPERS_DIR ]]; then
+		log_debug "Local wallpapers directory does not exist. Creating..."
+		make_directory "$LOCAL_WALLPAPERS_DIR" "$SUDO_USER" "755"
+	fi
+
+	cp $CUSTOM_WALLPAPERS_FILE $LOCAL_WALLPAPERS_DIR
+
+	if [[ $? -eq 0 ]]; then
+		log_success "Added custom wallpapers"
+		return 0
+	else
+		log_error "Failed to add custom wallpapers"
+		return 1
+	fi
 }
 
 #################### SERVICES ####################
@@ -531,6 +579,7 @@ main()
 	prompt_start
 	check_prerequisites
 	install_pacman_packages
+	add_wallpapers
 	set_up_configurations
 	install_fonts
 	enable_services
