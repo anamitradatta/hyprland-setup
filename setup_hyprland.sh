@@ -452,7 +452,11 @@ install_fonts()
 	fi
 
 	# Update fonts cache
-	fc-cache -fv
+	if [[ "$ENABLE_DEBUG" = true ]]; then
+		fc-cache -fv
+	else
+		fc-cache -f
+	fi
 
 	if [[ $? -eq 0 ]]; then
 		log_success "Installed custom fonts"
