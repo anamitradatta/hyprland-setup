@@ -12,11 +12,5 @@ terminal:
   - use preset kitty theme
   - install oh-my-zsh including autocomplete and suggestions and syntax highlighting and use custom theme
 
-wallpaper:
-  - add custom wallpaper
-
-hyprland configurations:
-  - hyprpaper
-
 load docker containers:
   - ros2 jazzy
