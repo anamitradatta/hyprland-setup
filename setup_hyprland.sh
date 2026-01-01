@@ -500,10 +500,8 @@ enable_service()
 
 	if systemctl enable $service; then
 		log_success "$service service enabled"
-		return 0
 	else
-		log_error "Failed to enable service $service"
-		return 1
+		log_warning "Failed to enable service $service"
 	fi
 }
 
@@ -512,7 +510,6 @@ enable_services()
 	log "Enabling services..."
 	enable_service "docker"
 	enable_service "sshd"
-	log_success "All services enabled"
 }
 
 #################### MAIN ####################
