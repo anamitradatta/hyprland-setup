@@ -2,6 +2,8 @@
 # ~/.bashrc
 #
 
+export EDITOR="vim"
+
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
@@ -21,3 +23,11 @@ alias hlc='vim /home/gogol/.config/hypr/hyprland.conf'
 alias cdhlc='cd /home/gogol/.config/hypr' 
 alias wbj="vim /home/gogol/.config/waybar/config.jsonc"
 alias wbs="vim /home/gogol/.config/waybar/style.css"
+
+function y() {
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+	command yazi "$@" --cwd-file="$tmp"
+	IFS= read -r -d '' cwd < "$tmp"
+	[ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
+	rm -f -- "$tmp"
+}

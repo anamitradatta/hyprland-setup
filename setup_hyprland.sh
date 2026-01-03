@@ -27,6 +27,7 @@ HOME_CONFIG_DIR=$HOME/.config
 HYPRLAND_CONFIG_DIR=$HOME_CONFIG_DIR/hypr
 LOCAL_SHARE_DIR=$HOME/.local/share
 LOCAL_FONTS_DIR=$LOCAL_SHARE_DIR/fonts
+LOCAL_YAZI_CONFIG_DIR=$HOME_CONFIG_DIR/yazi
 LOCAL_WAYBAR_CONFIG_DIR=$HOME_CONFIG_DIR/waybar
 LOCAL_WOFI_CONFIG_DIR=$HOME_CONFIG_DIR/wofi
 LOCAL_WALLPAPERS_DIR=$LOCAL_SHARE_DIR/wallpapers
@@ -42,6 +43,10 @@ CUSTOM_VIM_CONFIG_FILE=$CUSTOM_VIM_CONFIG_DIR/.vimrc
 CUSTOM_SHELL_CONFIG_DIR=$CUSTOM_CONFIGS_DIR/shell
 CUSTOM_BASH_CONFIG_FILE=$CUSTOM_SHELL_CONFIG_DIR/.bashrc
 CUSTOM_ZSH_CONFIG_FILE=$CUSTOM_SHELL_CONFIG_DIR/.zshrc
+
+# Yazi configuration
+CUSTOM_YAZI_CONFIG_DIR=$CUSTOM_CONFIGS_DIR/yazi
+CUSTOM_YAZI_TOML_FILE=$CUSTOM_YAZI_CONFIG_DIR/yazi.toml
 
 # Hyprland configurations
 CUSTOM_HYPRLAND_CONFIG_DIR=$CUSTOM_CONFIGS_DIR/hyprland
@@ -383,6 +388,20 @@ set_up_wofi_config()
 	log_success "Set up custom wofi configuration"
 }
 
+set_up_yazi_config()
+{
+	log_debug "Setting up custom yazi configuration"
+
+	if [[ ! -d $LOCAL_YAZI_CONFIG_DIR ]]; then
+		log_debug "Local yazi configuration directory does not exist. Creating..."
+		make_directory "$LOCAL_YAZI_CONFIG_DIR" "$SUDO_USER" "755"
+	fi
+
+	set_up_config_file $CUSTOM_YAZI_TOML_FILE $LOCAL_YAZI_CONFIG_DIR
+
+	log_success "Set up custom yazi configuration"
+}
+
 set_up_configurations()
 {
 	log "Setting up custom configurations..."
@@ -424,6 +443,9 @@ set_up_configurations()
 
 	# wofi
 	set_up_wofi_config
+
+	# yazi
+	set_up_yazi_config
 
 	log_success "Set up custom configurations"
 }

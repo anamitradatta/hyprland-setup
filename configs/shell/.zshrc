@@ -1,6 +1,8 @@
 # profile zsh 
 #zmodload zsh/zprof
 
+export EDITOR="vim"
+
 if [[ -z "$SSH_CONNECTION" && -z "$SSH_CLIENT" && -z "$SSH_TTY" && -d "$HOME/.oh-my-zsh" ]]; then
 	DISABLE_AUTO_UPDATE="true"
 	DISABLE_MAGIC_FUNCTIONS="true"
@@ -69,6 +71,14 @@ alias gs="git status"
 alias gr="git restore"
 alias dt="git diff"
 alias dtc="git diff --cached"
+
+function y() {
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+	command yazi "$@" --cwd-file="$tmp"
+	IFS= read -r -d '' cwd < "$tmp"
+	[ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
+	rm -f -- "$tmp"
+}
 
 # profile zsh
 #zprof | tee ~/test.txt
