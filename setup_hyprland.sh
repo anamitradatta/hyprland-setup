@@ -255,6 +255,7 @@ install_pacman_packages()
 		brightnessctl
     	curl
 		p7zip
+		yazi
     	vim
     	gvim
     	gedit
