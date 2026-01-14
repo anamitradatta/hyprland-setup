@@ -1,5 +1,3 @@
-install yay
-
 install packages:
   - hyprlock
   - hyprpaper

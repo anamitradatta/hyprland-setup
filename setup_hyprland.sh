@@ -208,12 +208,19 @@ check_configs()
 	fi
 }
 
+check_build_dependencies()
+{
+	install_pacman_package "base-devel"
+	install_pacman_package "git"
+}
+
 check_prerequisites()
 {
 	log "Checking prerequisites..."
 	check_root
 	check_os
 	check_hyprland
+	check_build_dependencies
 	check_configs
 	log_success "Checked all prerequisites. Proceeding with custom Hyprland setup"
 }
@@ -233,18 +240,18 @@ is_installed_by_pacman()
 
 install_pacman_package()
 {
-    log_debug "Install pacman package: $1"
-    if ! is_installed_by_pacman $1; then
-    	log_debug "Installing $1 with pacman..."
-    	pacman -S --needed --noconfirm $1
+	log_debug "Install pacman package: $1"
+	if ! is_installed_by_pacman $1; then
+		log_debug "Installing $1 with pacman..."
+		pacman -S --needed --noconfirm $1
 		if [[ $? -ne 0 ]]; then
-			log_error "Error occurred while installing $1 using pacman"
+			log_error "Failed to install $1 using pacman"
 			return 1
-    	else
-	    	log_success "Installed $1 using pacman"
+		else
+			log_success "Installed $1 using pacman"
 			return 0
-    	fi
-    fi
+		fi
+	fi
 	return 0
 }
 
@@ -280,6 +287,49 @@ install_pacman_packages()
 	log_success "Installed all pacman packages"
 }
 
+is_installed()
+{
+	command -v "$1" >/dev/null 2>&1
+}
+
+install_yay()
+{
+	log "Installing yay..."
+
+	if is_installed "yay"; then
+		log_success "yay is already installed"
+		return 0
+	fi
+
+	YAY_BUILD_DIR=$(mktemp -d)
+	if [ $? -ne 0 ]; then
+		log_error "mktemp failed to make temp directory for installing yay"
+		return 1
+	fi
+
+	log_debug "Cloning yay repository into $YAY_BUILD_DIR"
+	git clone https://aur.archlinux.org/yay.git "$YAY_BUILD_DIR"
+	if [ $? -ne 0 ]; then
+		log_error "Failed to clone yay repository"
+		rm -rf $YAY_BUILD_DIR
+		return 1
+	fi
+
+	log_debug "Building and installing yay"
+	cd $YAY_BUILD_DIR/yay
+	runuser -l "$SUDO_USER" -c "makepkg -si --noconfirm"
+	YAY_INSTALL_RC=$?
+	rm -rf $YAY_BUILD_DIR
+
+	if [[ $YAY_INSTALL_RC -ne 0 ]] && is_installed "yay"; then
+		log_success "Installed yay"
+		return 0
+	else
+		log_error "Failed to install yay"
+		return 1
+	fi
+}
+
 #################### CONFIGURATIONS ####################
 
 set_up_config_file()
@@ -311,9 +361,11 @@ change_shell_to_zsh()
 	log_debug "Changing shell to zsh"
 	local ZSH_PATH
 
-	if ! ZSH_PATH="$(command -v zsh 2>/dev/null)"; then
+	if ! is_installed "zsh"; then
 		log_warning "zsh is not installed. Skipping changing shell to zsh"
 		return 0
+	else
+		ZSH_PATH="$(command -v zsh)"
 	fi
 
 	if [[ "$SHELL" != "$ZSH_PATH" ]]; then
@@ -326,7 +378,7 @@ change_shell_to_zsh()
 		fi
 	fi
 
-	log_debug "Default shell is already zsh"
+	log_success "Default shell is already zsh"
 	return 0
 }
 
@@ -347,9 +399,8 @@ set_up_lock_handle_lid_switch()
 	fi
 
 	sed -i 's/^[[:space:]]*#\?\s*HandleLidSwitch=.*/HandleLidSwitch=lock/' $LOGIND_CONF
-	SED_RC=$?
 
-	if [[ $SED_RC -ne 0 ]]; then
+	if [[ $? -ne 0 ]]; then
 		log_error "Failed to update HandleLidSwitch in $LOGIND_CONF (sed exit code: $SED_RC)"
 		return 1
 	else
@@ -603,6 +654,7 @@ main()
 	prompt_start
 	check_prerequisites
 	install_pacman_packages
+	install_yay
 	add_wallpapers
 	set_up_configurations
 	install_fonts
