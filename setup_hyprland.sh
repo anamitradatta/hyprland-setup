@@ -31,6 +31,10 @@ LOCAL_YAZI_CONFIG_DIR=$HOME_CONFIG_DIR/yazi
 LOCAL_WAYBAR_CONFIG_DIR=$HOME_CONFIG_DIR/waybar
 LOCAL_WOFI_CONFIG_DIR=$HOME_CONFIG_DIR/wofi
 LOCAL_WALLPAPERS_DIR=$LOCAL_SHARE_DIR/wallpapers
+HOME_SCRIPTS_DIR=$HOME/scripts
+
+# Scripts
+SCRIPTS_DIR=$(pwd)/scripts
 
 # Custom configurations
 CUSTOM_CONFIGS_DIR=$(pwd)/configs
@@ -278,6 +282,7 @@ install_pacman_packages()
 		wofi
 		firefox
 		strace
+		inotify-tools
 	)
 
 	for pkg in "${PACKAGES[@]}"; do
@@ -501,6 +506,24 @@ set_up_configurations()
 	log_success "Set up custom configurations"
 }
 
+#################### SCRIPTS ####################
+
+add_scripts()
+{
+	log "Adding scripts..."
+
+	if [[ ! -d $HOME_SCRIPTS_DIR ]]; then
+		log_debug "Home scripts directory does not exist. Creating..."
+		make_directory "$HOME_SCRIPTS_DIR" "$SUDO_USER" "755"
+	fi
+
+	cp $SCRIPTS_DIR/* $HOME_SCRIPTS_DIR/
+	chmod 755 $HOME_SCRIPTS_DIR/*
+	chown $SUDO_USER:$SUDO_USER $HOME_SCRIPTS_DIR/*
+
+	log_success "Added scripts"
+}
+
 #################### FONTS ####################
 
 install_fonts()
@@ -655,6 +678,7 @@ main()
 	check_prerequisites
 	install_pacman_packages
 	install_yay
+	add_scripts
 	add_wallpapers
 	set_up_configurations
 	install_fonts
