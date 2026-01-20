@@ -23,6 +23,7 @@ ENABLE_DEBUG=false
 
 #################### CONSTANTS ####################
 
+USR_LOCAL_BIN=/usr/local/bin
 HOME_CONFIG_DIR=$HOME/.config
 HYPRLAND_CONFIG_DIR=$HOME_CONFIG_DIR/hypr
 LOCAL_SHARE_DIR=$HOME/.local/share
@@ -31,7 +32,7 @@ LOCAL_YAZI_CONFIG_DIR=$HOME_CONFIG_DIR/yazi
 LOCAL_WAYBAR_CONFIG_DIR=$HOME_CONFIG_DIR/waybar
 LOCAL_WOFI_CONFIG_DIR=$HOME_CONFIG_DIR/wofi
 LOCAL_WALLPAPERS_DIR=$LOCAL_SHARE_DIR/wallpapers
-HOME_SCRIPTS_DIR=$HOME/scripts
+LOCAL_SCRIPTS_DIR=$USR_LOCAL_BIN/scripts
 
 # Scripts
 SCRIPTS_DIR=$(pwd)/scripts
@@ -512,14 +513,14 @@ add_scripts()
 {
 	log "Adding scripts..."
 
-	if [[ ! -d $HOME_SCRIPTS_DIR ]]; then
-		log_debug "Home scripts directory does not exist. Creating..."
-		make_directory "$HOME_SCRIPTS_DIR" "$SUDO_USER" "755"
+	if [[ ! -d $LOCAL_SCRIPTS_DIR ]]; then
+		log_debug "Local scripts directory does not exist. Creating..."
+		make_directory "$LOCAL_SCRIPTS_DIR" "root" "755"
 	fi
 
-	cp $SCRIPTS_DIR/* $HOME_SCRIPTS_DIR/
-	chmod 755 $HOME_SCRIPTS_DIR/*
-	chown $SUDO_USER:$SUDO_USER $HOME_SCRIPTS_DIR/*
+	cp $SCRIPTS_DIR/* $LOCAL_SCRIPTS_DIR/
+	chmod 755 $LOCAL_SCRIPTS_DIR/*
+	chown root:root $LOCAL_SCRIPTS_DIR/*
 
 	log_success "Added scripts"
 }
