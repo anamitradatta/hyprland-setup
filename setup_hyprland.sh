@@ -308,13 +308,14 @@ install_yay()
 	fi
 
 	YAY_BUILD_DIR=$(mktemp -d)
+	chown $SUDO_USER:$SUDO_USER $YAY_BUILD_DIR
 	if [ $? -ne 0 ]; then
 		log_error "mktemp failed to make temp directory for installing yay"
 		return 1
 	fi
 
 	log_debug "Cloning yay repository into $YAY_BUILD_DIR"
-	git clone https://aur.archlinux.org/yay.git "$YAY_BUILD_DIR"
+	runuser -l $SUDO_USER -c "git clone https://aur.archlinux.org/yay.git $YAY_BUILD_DIR"
 	if [ $? -ne 0 ]; then
 		log_error "Failed to clone yay repository"
 		rm -rf $YAY_BUILD_DIR
@@ -322,8 +323,7 @@ install_yay()
 	fi
 
 	log_debug "Building and installing yay"
-	cd $YAY_BUILD_DIR/yay
-	runuser -l "$SUDO_USER" -c "makepkg -si --noconfirm"
+	runuser -l $SUDO_USER -c "cd $YAY_BUILD_DIR; makepkg -si --noconfirm"
 	YAY_INSTALL_RC=$?
 	rm -rf $YAY_BUILD_DIR
 
