@@ -284,6 +284,7 @@ install_pacman_packages()
 		firefox
 		strace
 		inotify-tools
+		wl-clipboard
 	)
 
 	for pkg in "${PACKAGES[@]}"; do
