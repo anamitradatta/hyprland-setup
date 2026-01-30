@@ -4,10 +4,9 @@
 }
 
 window#waybar {
-    background-color: #0b1220;
-    border-bottom: 1px solid #1e2a44;
+    background: transparent;
+    border: none;
     color: #cdd6f4;
-    transition-property: background-color;
     transition-duration: .5s;
 }
 
@@ -15,13 +14,18 @@ window#waybar.hidden {
     opacity: 0.2;
 }
 
-window#waybar.termite {
-    background-color: #3F3F3F;
+.modules-left,
+.modules-center,
+.modules-right {
+	background-color: #0b1220;
+	border: 1px solid #1e2a44;
+	border-radius: 12px;
+	padding: 4px 8px;
+	margin: 6px 8px;
 }
 
-window#waybar.chromium {
-    background-color: #000000;
-    border: none;
+.modules-center {
+	padding: 6px 16px;
 }
 
 button {
@@ -64,7 +68,6 @@ button:hover {
 #workspaces button.urgent {
     background: #f7768e;
     color: #1e1e2e;
-    border-radius: 6px;
 }
 
 #workspaces button.urgent:hover {
@@ -104,22 +107,14 @@ button:hover {
 
 #window,
 #workspaces {
-    margin: 0 4px;
-}
-
-/* If workspaces is the leftmost module, omit left margin */
-.modules-left > widget:first-child > #workspaces {
-    margin-left: 0;
-}
-
-/* If workspaces is the rightmost module, omit right margin */
-.modules-right > widget:last-child > #workspaces {
-    margin-right: 0;
+	margin-left: 0px;
+	margin-right: 0px;
 }
 
 #clock {
     color: #cdd6f4;
 	font-weight: 500;
+	letter-spacing: 0.5px;
 }
 
 #battery {
