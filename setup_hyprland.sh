@@ -29,6 +29,7 @@ HYPRLAND_CONFIG_DIR=$HOME_CONFIG_DIR/hypr
 LOCAL_SHARE_DIR=$HOME/.local/share
 LOCAL_FONTS_DIR=$LOCAL_SHARE_DIR/fonts
 LOCAL_YAZI_CONFIG_DIR=$HOME_CONFIG_DIR/yazi
+LOCAL_CAVA_CONFIG_DIR=$HOME_CONFIG_DIR/cava
 LOCAL_WAYBAR_CONFIG_DIR=$HOME_CONFIG_DIR/waybar
 LOCAL_WOFI_CONFIG_DIR=$HOME_CONFIG_DIR/wofi
 LOCAL_WALLPAPERS_DIR=$LOCAL_SHARE_DIR/wallpapers
@@ -52,6 +53,10 @@ CUSTOM_ZSH_CONFIG_FILE=$CUSTOM_SHELL_CONFIG_DIR/.zshrc
 # Yazi configuration
 CUSTOM_YAZI_CONFIG_DIR=$CUSTOM_CONFIGS_DIR/yazi
 CUSTOM_YAZI_TOML_FILE=$CUSTOM_YAZI_CONFIG_DIR/yazi.toml
+
+# Cava configuration
+CUSTOM_CAVA_CONFIG_DIR=$CUSTOM_CONFIGS_DIR/cava
+CUSTOM_CAVA_CONFIG_FILE=$CUSTOM_CAVA_CONFIG_DIR/config
 
 # Hyprland configurations
 CUSTOM_HYPRLAND_CONFIG_DIR=$CUSTOM_CONFIGS_DIR/hyprland
@@ -281,6 +286,9 @@ install_pacman_packages()
     	docker
 		waybar
 		wofi
+		cava
+		amberol
+		xdg-desktop-portal-gtk
 		firefox
 		strace
 		inotify-tools
@@ -460,6 +468,19 @@ set_up_yazi_config()
 	log_success "Set up custom yazi configuration"
 }
 
+set_up_cava_config()
+{
+	log_debug "Setting up custom cava configuration"
+	if [[ ! -d $LOCAL_CAVA_CONFIG_DIR ]]; then
+		log_debug "Local cava configuration directory does not exist. Creating..."
+		make_directory "$LOCAL_CAVA_CONFIG_DIR" "$SUDO_USER" "755"
+	fi
+
+	set_up_config_file $CUSTOM_CAVA_CONFIG_FILE $LOCAL_CAVA_CONFIG_DIR
+
+	log_success "Set up custom cava configuration"
+}
+
 set_up_configurations()
 {
 	log "Setting up custom configurations..."
@@ -504,6 +525,9 @@ set_up_configurations()
 
 	# yazi
 	set_up_yazi_config
+
+	# cava
+	set_up_cava_config
 
 	log_success "Set up custom configurations"
 }
