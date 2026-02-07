@@ -238,6 +238,7 @@ check_prerequisites()
 
 #################### INSTALL FUNCTIONS ####################
 
+#################### PACMAN ####################
 upgrade_pacman_packages()
 {
 	log "Upgrading pacman packages..."
@@ -253,10 +254,10 @@ upgrade_pacman_packages()
 is_installed_by_pacman()
 {
 	if pacman -Q $1 >/dev/null 2>&1; then
-		log_success "$1 is already installed"
+		log_success "$1 is already installed by pacman"
 		return 0
 	else
-    	log_debug "$1 is not installed by pacman"
+		log_debug "$1 is not installed by pacman"
 		return 1
 	fi
 }
@@ -309,7 +310,7 @@ install_pacman_packages()
 	)
 
 	for pkg in "${PACKAGES[@]}"; do
-    	install_pacman_package "$pkg"
+		install_pacman_package "$pkg"
 	done
 
 	log_success "Installed all pacman packages"
@@ -319,6 +320,8 @@ is_installed()
 {
 	command -v "$1" >/dev/null 2>&1
 }
+
+#################### YAY ####################
 
 install_yay()
 {
@@ -356,6 +359,65 @@ install_yay()
 		log_error "Failed to install yay"
 		return 1
 	fi
+}
+
+upgrade_yay_packages()
+{
+	log "Upgrading yay packages..."
+	if yay -Syu --noconfirm >/dev/null 2>&1; then
+		log_success "yay packages successfully upgraded"
+		return 0
+	else
+		log_error "Failure while upgrading yay packages"
+		return 1
+	fi
+}
+
+is_installed_by_yay()
+{
+	if yay -Q $1 >/dev/null 2>&1; then
+		log_success "$1 is already installed by yay"
+		return 0
+	else
+		log_debug "$1 is not installed by yay"
+		return 1
+	fi
+}
+
+install_yay_package()
+{
+	log_debug "Install yay package: $1"
+	if ! is_installed_by_yay $1; then
+		log_debug "Installing $1 with yay..."
+		yay -S --needed --noconfirm $1
+		if [[ $? -ne 0 ]]; then
+			log_error "Failed to install $1 using yay"
+			return 1
+		else
+			log_success "Installed $1 using yay"
+			return 0
+		fi
+	fi
+	return 0
+}
+
+install_yay_packages()
+{
+    log "Installing yay packages..."
+
+	PACKAGES=(
+		hyprlock
+		hypridle
+		hyprpaper
+		wlogout
+		google-chrome
+	)
+
+	for pkg in "${PACKAGES[@]}"; do
+		install_yay_package "$pkg"
+	done
+
+	log_success "Installed all yay packages"
 }
 
 #################### CONFIGURATIONS ####################
@@ -715,9 +777,11 @@ main()
 	parse_flags "$@"
 	prompt_start
 	upgrade_pacman_packages
+	upgrade_yay_packages
 	check_prerequisites
 	install_pacman_packages
 	#install_yay
+	install_yay_packages
 	add_scripts
 	add_wallpapers
 	set_up_configurations
