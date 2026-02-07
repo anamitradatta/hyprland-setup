@@ -9,6 +9,7 @@
 # - hyprland
 # - git
 # - kitty
+# - yay
 
 # please run this script within the hyprland_setup directory
 
@@ -236,6 +237,18 @@ check_prerequisites()
 }
 
 #################### INSTALL FUNCTIONS ####################
+
+upgrade_pacman_packages()
+{
+	log "Upgrading pacman packages..."
+	if pacman -Syu --noconfirm >/dev/null 2>&1; then
+		log_success "pacman packages successfully upgraded"
+		return 0
+	else
+		log_error "Failure while upgrading pacman packages"
+		return 1
+	fi
+}
 
 is_installed_by_pacman()
 {
@@ -701,9 +714,10 @@ main()
 {
 	parse_flags "$@"
 	prompt_start
+	upgrade_pacman_packages
 	check_prerequisites
 	install_pacman_packages
-	install_yay
+	#install_yay
 	add_scripts
 	add_wallpapers
 	set_up_configurations
