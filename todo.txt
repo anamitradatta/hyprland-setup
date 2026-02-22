@@ -1,6 +1,4 @@
 terminal:
-  - check if kitty is installed 
-  - use preset kitty theme
   - install oh-my-zsh including autocomplete and suggestions and syntax highlighting and use custom theme
 
 load docker containers:

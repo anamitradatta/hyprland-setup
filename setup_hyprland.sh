@@ -8,7 +8,6 @@
 # it assumes the following have already been installed:
 # - hyprland
 # - git
-# - kitty
 # - yay
 
 # please run this script within the hyprland_setup directory
@@ -31,6 +30,7 @@ LOCAL_SHARE_DIR=$HOME/.local/share
 LOCAL_FONTS_DIR=$LOCAL_SHARE_DIR/fonts
 LOCAL_YAZI_CONFIG_DIR=$HOME_CONFIG_DIR/yazi
 LOCAL_CAVA_CONFIG_DIR=$HOME_CONFIG_DIR/cava
+LOCAL_KITTY_CONFIG_DIR=$HOME_CONFIG_DIR/kitty
 LOCAL_WAYBAR_CONFIG_DIR=$HOME_CONFIG_DIR/waybar
 LOCAL_WOFI_CONFIG_DIR=$HOME_CONFIG_DIR/wofi
 LOCAL_WALLPAPERS_DIR=$LOCAL_SHARE_DIR/wallpapers
@@ -58,6 +58,11 @@ CUSTOM_YAZI_TOML_FILE=$CUSTOM_YAZI_CONFIG_DIR/yazi.toml
 # Cava configuration
 CUSTOM_CAVA_CONFIG_DIR=$CUSTOM_CONFIGS_DIR/cava
 CUSTOM_CAVA_CONFIG_FILE=$CUSTOM_CAVA_CONFIG_DIR/config
+
+# Kitty configuration
+CUSTOM_KITTY_CONFIG_DIR=$CUSTOM_CONFIGS_DIR/kitty
+CUSTOM_KITTY_CONFIG_FILE=$CUSTOM_KITTY_CONFIG_DIR/kitty.conf
+CUSTOM_KITTY_THEME_FILE=$CUSTOM_KITTY_CONFIG_DIR/current-theme.conf
 
 # Hyprland configurations
 CUSTOM_HYPRLAND_CONFIG_DIR=$CUSTOM_CONFIGS_DIR/hyprland
@@ -284,20 +289,21 @@ install_pacman_packages()
     log "Installing pacman packages..."
 
 	PACKAGES=(
-    	bash-completion
+		bash-completion
 		man-db
-    	zsh
+		zsh
+		kitty
 		pavucontrol
 		brightnessctl
-    	curl
+		curl
 		p7zip
 		yazi
-    	vim
-    	gvim
-    	gedit
-    	code
-    	openssh
-    	docker
+		vim
+		gvim
+		gedit
+		code
+		openssh
+		docker
 		waybar
 		wofi
 		cava
@@ -556,6 +562,20 @@ set_up_cava_config()
 	log_success "Set up custom cava configuration"
 }
 
+set_up_kitty_config()
+{
+	log_debug "Setting up custom kitty configuration"
+	if [[ ! -d $LOCAL_KITTY_CONFIG_DIR ]]; then
+		log_debug "Local kitty configuration directory does not exist. Creating..."
+		make_directory "$LOCAL_KITTY_CONFIG_DIR" "$SUDO_USER" "755"
+	fi
+
+	set_up_config_file $CUSTOM_KITTY_CONFIG_FILE $LOCAL_KITTY_CONFIG_DIR
+	set_up_config_file $CUSTOM_KITTY_THEME_FILE $LOCAL_KITTY_CONFIG_DIR
+
+	log_success "Set up custom kitty configuration"
+}
+
 set_up_configurations()
 {
 	log "Setting up custom configurations..."
@@ -603,6 +623,9 @@ set_up_configurations()
 
 	# cava
 	set_up_cava_config
+
+	# kitty
+	set_up_kitty_config
 
 	log_success "Set up custom configurations"
 }
