@@ -33,6 +33,8 @@ LOCAL_CAVA_CONFIG_DIR=$HOME_CONFIG_DIR/cava
 LOCAL_KITTY_CONFIG_DIR=$HOME_CONFIG_DIR/kitty
 LOCAL_WAYBAR_CONFIG_DIR=$HOME_CONFIG_DIR/waybar
 LOCAL_WOFI_CONFIG_DIR=$HOME_CONFIG_DIR/wofi
+LOCAL_WIREPLUMBER_CONFIG_DIR=$HOME_CONFIG_DIR/wireplumber
+LOCAL_WIREPLUMBER_LUA_CONFIG_DIR=$LOCAL_WIREPLUMBER_CONFIG_DIR/main.lua.d
 LOCAL_WALLPAPERS_DIR=$LOCAL_SHARE_DIR/wallpapers
 LOCAL_SCRIPTS_DIR=$USR_LOCAL_BIN/scripts
 
@@ -80,6 +82,11 @@ CUSTOM_WAYBAR_CONFIG_STYLE_CSS_FILE=$CUSTOM_WAYBAR_CONFIG_DIR/style.css
 CUSTOM_WOFI_CONFIG_DIR=$CUSTOM_CONFIGS_DIR/wofi
 CUSTOM_WOFI_CONFIG_FILE=$CUSTOM_WOFI_CONFIG_DIR/config
 CUSTOM_WOFI_STYLE_CSS_FILE=$CUSTOM_WOFI_CONFIG_DIR/style.css
+
+# wireplumber configuration
+CUSTOM_WIREPLUMBER_CONFIG_DIR=$CUSTOM_CONFIGS_DIR/wireplumber
+CUSTOM_WIREPLUMBER_LUA_CONFIG_DIR=$CUSTOM_WIREPLUMBER_CONFIG_DIR/main.lua.d
+CUSTOM_WIREPLUMBER_HDMI_AUTO_SWITCH_RULE=$CUSTOM_WIREPLUMBER_LUA_CONFIG_DIR/51-hdmi-auto-switch.lua
 
 # Custom fonts
 CUSTOM_FONTS_DIR=$(pwd)/fonts
@@ -313,6 +320,7 @@ install_pacman_packages()
 		strace
 		inotify-tools
 		wl-clipboard
+		alsa-utils
 	)
 
 	for pkg in "${PACKAGES[@]}"; do
@@ -576,6 +584,24 @@ set_up_kitty_config()
 	log_success "Set up custom kitty configuration"
 }
 
+set_up_wireplumber_config()
+{
+	log_debug "Setting up custom wireplumber configuration"
+	if [[ ! -d $LOCAL_WIREPLUMBER_CONFIG_DIR ]]; then
+		log_debug "Local wireplumber configuration directory does not exist. Creating..."
+		make_directory "$LOCAL_WIREPLUMBER_CONFIG_DIR" "$SUDO_USER" "755"
+	fi
+
+	if [[ ! -d $LOCAL_WIREPLUMBER_LUA_CONFIG_DIR ]]; then
+		log_debug "Local wireplumber lua configuration directory does not exist. Creating..."
+		make_directory "$LOCAL_WIREPLUMBER_LUA_CONFIG_DIR" "$SUDO_USER" "755"
+	fi
+
+	set_up_config_file $CUSTOM_WIREPLUMBER_HDMI_AUTO_SWITCH_RULE $LOCAL_WIREPLUMBER_LUA_CONFIG_DIR
+
+	log_success "Set up custom wireplumber configuration"
+}
+
 set_up_configurations()
 {
 	log "Setting up custom configurations..."
@@ -626,6 +652,9 @@ set_up_configurations()
 
 	# kitty
 	set_up_kitty_config
+
+	# wireplumber
+	set_up_wireplumber_config
 
 	log_success "Set up custom configurations"
 }
@@ -800,11 +829,11 @@ main()
 	parse_flags "$@"
 	prompt_start
 	upgrade_pacman_packages
-	upgrade_yay_packages
+	#upgrade_yay_packages
 	check_prerequisites
 	install_pacman_packages
 	#install_yay
-	install_yay_packages
+	#install_yay_packages
 	add_scripts
 	add_wallpapers
 	set_up_configurations
