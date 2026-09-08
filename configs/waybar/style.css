@@ -1,176 +1,238 @@
+/* ── Waybar · Tokyo Night Glass ───────────────────────────── */
+
+@define-color bg      #1a1b26;
+@define-color surface  alpha(#1a1b26, 0.85);
+@define-color border   alpha(#7aa2f7, 0.14);
+@define-color fg       #c0caf5;
+@define-color subfg    #9aa5ce;
+@define-color pill     #292e42;
+@define-color accent   #7aa2f7;
+@define-color cyan     #7dcfff;
+@define-color mauve    #bb9af7;
+@define-color green    #9ece6a;
+@define-color yellow   #e0af68;
+@define-color orange   #ff9e64;
+@define-color red      #f7768e;
+@define-color on_acc   #16161e;
+
 * {
     font-family: "JetBrains Mono", monospace;
     font-size: 13px;
+    min-height: 0;
+    padding: 0;
+    margin: 0;
+    border: none;
 }
 
 window#waybar {
     background: transparent;
-    border: none;
-    color: #cdd6f4;
-    transition-duration: .5s;
+    color: @fg;
+    transition-duration: 300ms;
 }
 
 window#waybar.hidden {
     opacity: 0.2;
 }
 
+window#waybar.empty #window {
+    background-color: transparent;
+}
+
+/* ── floating glass segments ─────────────────────────────── */
 .modules-left,
 .modules-center,
 .modules-right {
-	background-color: #0b1220;
-	border: 1px solid #1e2a44;
-	border-radius: 12px;
-	padding: 4px 8px;
-	margin: 6px 8px;
+    background-color: @surface;
+    border: 1px solid @border;
+    border-radius: 14px;
+    padding: 4px 8px;
+    margin: 8px;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
 }
 
 .modules-center {
-	padding: 6px 16px;
+    padding: 6px 16px;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 button {
-    /* Use box-shadow instead of border so the text isn't offset */
-    box-shadow: inset 0 -3px transparent;
-    /* Avoid rounded borders under each button name */
-    border: none;
-    border-radius: 0;
+    box-shadow: inset 0 -2px transparent;
 }
 
-/* https://github.com/Alexays/Waybar/wiki/FAQ#the-workspace-buttons-have-a-strange-hover-effect */
 button:hover {
     background: inherit;
-    box-shadow: inset 0 -3px #ffffff;
+    box-shadow: inset 0 -2px @accent;
 }
 
-/* you can set a style on hover for any module like this */
-#pulseaudio:hover {
-    background-color: #a37800;
+/* ── workspaces (minimal pills) ──────────────────────────── */
+#workspaces {
+    margin: 0 4px;
 }
 
 #workspaces button {
-	all: unset;
-	padding: 4px 8px;
-	margin: 0 2px;
-	border-radius: 6px;
+    all: unset;
+    outline: none;
+    min-width: 20px;
+    min-height: 20px;
+    margin: 0 2px;
+    padding: 0;
+    border: 2px solid transparent;
+    border-radius: 0;
     background-color: transparent;
-    color: #7aa2f7;
+    color: @subfg;
+    font-size: 12px;
+    transition-duration: 200ms;
 }
 
 #workspaces button:hover {
-    background: #162035;
+    background-color: transparent;
+    color: @fg;
+    box-shadow: none;
 }
 
-#workspaces button.focused {
-    background-color: #64727D;
-    box-shadow: inset 0 -3px #ffffff;
+#workspaces button.empty {
+    opacity: 0.45;
+}
+
+/* occupied but not current workspace */
+#workspaces button:not(.active):not(.empty) {
+    color: @fg;
+}
+
+/* workspace shown on another monitor */
+#workspaces button.visible {
+    color: @accent;
+}
+
+/* current workspace: filled circle around the number */
+#workspaces button.active {
+    color: @on_acc;
+    font-weight: 700;
+    border: 2px solid @accent;
+    border-radius: 999px;
+    background-color: @accent;
+    min-width: 20px;
+    min-height: 20px;
+    box-shadow: 0 0 8px alpha(@accent, 0.4);
 }
 
 #workspaces button.urgent {
-    background: #f7768e;
-    color: #1e1e2e;
+    color: @red;
 }
 
 #workspaces button.urgent:hover {
-    background: #f38ba8;
+    color: @red;
 }
 
-#workspaces button.active {
-    background-color: #1e2a44;
-	color: #9ece6a;
+/* kill GTK's click-focus ring on workspace buttons */
+#workspaces button:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+#workspaces button.active:focus {
+    box-shadow: 0 0 8px alpha(@accent, 0.4);
 }
 
 #mode {
-    background-color: #64727D;
-    box-shadow: inset 0 -3px #ffffff;
+    background-color: @pill;
+    border-radius: 999px;
+    padding: 1px 10px;
+    margin: 0 4px;
+    color: @fg;
 }
 
-#clock,
-#battery,
-#cpu,
-#memory,
-#disk,
-#temperature,
-#backlight,
-#network,
-#pulseaudio,
-#wireplumber,
-#custom-media,
-#tray,
-#mode,
-#idle_inhibitor,
-#scratchpad,
-#power-profiles-daemon,
-#mpd {
+/* ── shared module base ──────────────────────────────────── */
+#clock, #battery, #cpu, #memory, #disk, #temperature,
+#backlight, #network, #pulseaudio, #wireplumber, #custom-media,
+#tray, #mode, #idle_inhibitor, #scratchpad, #power-profiles-daemon,
+#mpd, #keyboard-state, #custom-wlogout {
     padding: 0 10px;
-    color: #ffffff;
+    color: @fg;
 }
 
-#window,
-#workspaces {
-	margin-left: 0px;
-	margin-right: 0px;
+#network:hover, #pulseaudio:hover, #mpd:hover, #cpu:hover,
+#memory:hover, #temperature:hover, #backlight:hover,
+#power-profiles-daemon:hover {
+    background-color: @pill;
+    border-radius: 999px;
 }
 
 #clock {
-    color: #cdd6f4;
-	font-weight: 500;
-	letter-spacing: 0.5px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
 }
 
+/* ── launcher pills ──────────────────────────────────────── */
 #custom-chrome {
-    padding: 0 6px;
-    color: #f7768e;
-    background-color: #162035;
-    border-radius: 6px;
+    padding: 2px 12px;
     margin: 0 2px;
+    border-radius: 999px;
+    background-color: @pill;
+    color: @red;
+    transition-duration: 200ms;
 }
 
 #custom-vscode {
-    padding: 0 6px;
-    color: #7dcfff;
-    background-color: #162035;
-    border-radius: 6px;
+    padding: 2px 12px;
     margin: 0 2px;
+    border-radius: 999px;
+    background-color: @pill;
+    color: @cyan;
+    transition-duration: 200ms;
 }
 
 #custom-chrome:hover {
-    color: #1e1e2e;
-    background-color: #f7768e;
+    background-color: @red;
+    color: @on_acc;
 }
 
 #custom-vscode:hover {
-    color: #1e1e2e;
-    background-color: #7dcfff;
+    background-color: @cyan;
+    color: @on_acc;
 }
 
 #custom-sep {
-    border-left: 1px solid #2a3b5f;
-    margin: 0 8px 0 10px;
+    border-left: 1px solid alpha(@fg, 0.12);
+    margin: 0 6px;
+    padding: 0;
 }
 
+#custom-wlogout {
+    border-radius: 999px;
+    padding: 2px 10px;
+    transition-duration: 200ms;
+}
+
+#custom-wlogout:hover {
+    background-color: @red;
+    color: @on_acc;
+}
+
+/* ── battery ─────────────────────────────────────────────── */
 #battery {
-    color: #bb9af7;
+    color: @mauve;
 }
 
 #battery.charging, #battery.plugged {
-    color: #26A65B;
+    color: @green;
 }
 
 #battery.low {
-	color: #f7768e;
+    color: @orange;
 }
 
 @keyframes blink {
     to {
-        background-color: #ffffff;
-        color: #000000;
+        background-color: @red;
+        color: @on_acc;
     }
 }
 
-/* Using steps() instead of linear as a timing function to limit cpu usage */
 #battery.critical:not(.charging) {
-    background-color: #f53c3c;
-    color: #ffffff;
+    background-color: alpha(@red, 0.25);
+    color: @red;
     animation-name: blink;
     animation-duration: 0.5s;
     animation-timing-function: steps(12);
@@ -178,94 +240,85 @@ button:hover {
     animation-direction: alternate;
 }
 
-#power-profiles-daemon {
-    padding-right: 15px;
-}
-
+/* ── power profiles ──────────────────────────────────────── */
 #power-profiles-daemon.performance {
-    background-color: #f53c3c;
-    color: #ffffff;
+    color: @red;
 }
 
 #power-profiles-daemon.balanced {
-    background-color: #2980b9;
-    color: #ffffff;
+    color: @cyan;
 }
 
 #power-profiles-daemon.power-saver {
-    background-color: #2ecc71;
-    color: #000000;
+    color: @green;
 }
 
-label:focus {
-    background-color: #000000;
-}
-
-#cpu {
-    color: #2ecc71;
-}
-
-#memory {
-    color: #9b59b6;
-}
-
-#disk {
-    background-color: #964B00;
-}
-
-#backlight {
-    color: #90b1b1;
-}
-
-#network {
-    color: #7dcfff;
-}
-
-#network.disconnected {
-    color: #f53c3c;
-}
-
-#pulseaudio {
-    color: #7aa2f7;
-}
-
-#pulseaudio.muted {
-    color: #f7768e;
-}
-
-#wireplumber {
-    background-color: #fff0f5;
-    color: #000000;
-}
-
-#wireplumber.muted {
-    background-color: #f53c3c;
-}
-
+/* ── media / mpd (tinted text, no colour blocks) ─────────── */
 #custom-media {
-    background-color: #66cc99;
-    color: #2a5c45;
-    min-width: 100px;
+    min-width: 0;
+    color: @green;
 }
 
 #custom-media.custom-spotify {
-    background-color: #66cc99;
+    color: @green;
 }
 
 #custom-media.custom-vlc {
-    background-color: #ffa000;
+    color: @orange;
 }
 
-#temperature {
-    color: #f0932b;
+#mpd {
+    color: @mauve;
 }
 
-#temperature.critical {
-    color: #eb4d4b;
+#mpd.disconnected {
+    color: @red;
 }
 
-#tray {
+#mpd.stopped {
+    color: @subfg;
+}
+
+#mpd.paused {
+    color: @cyan;
+}
+
+/* ── keyboard-state / scratchpad ─────────────────────────── */
+#keyboard-state {
+    background-color: alpha(@pill, 0.7);
+    border-radius: 999px;
+    margin: 0 4px;
     padding: 0 6px;
+}
+
+#keyboard-state > label {
+    padding: 0 4px;
+}
+
+#keyboard-state > label.locked {
+    background-color: alpha(@red, 0.3);
+    border-radius: 999px;
+    padding: 0 6px;
+}
+
+#scratchpad {
+    color: @yellow;
+}
+
+#scratchpad:not(.empty) {
+    background-color: @pill;
+    border-radius: 999px;
+    padding: 2px 10px;
+    margin: 0 2px;
+}
+
+#scratchpad.empty {
+    background-color: transparent;
+}
+
+/* ── tray ────────────────────────────────────────────────── */
+#tray {
+    padding: 0 8px;
 }
 
 #tray > .passive {
@@ -274,83 +327,67 @@ label:focus {
 
 #tray > .needs-attention {
     -gtk-icon-effect: highlight;
-    background-color: #eb4d4b;
+    background-color: @red;
+    border-radius: 999px;
 }
 
-#idle_inhibitor {
-    color: #ecf0f1;
+/* ── misc colours ────────────────────────────────────────── */
+label:focus {
+    background-color: transparent;
 }
 
-#idle_inhibitor.activated {
-    color: #ecf0f1;
+#cpu {
+    color: @green;
 }
 
-#mpd {
-    background-color: #66cc99;
-    color: #2a5c45;
+#memory {
+    color: @mauve;
 }
 
-#mpd.disconnected {
-    background-color: #f53c3c;
+#temperature {
+    color: @orange;
 }
 
-#mpd.stopped {
-    background-color: #90b1b1;
+#temperature.critical {
+    color: @red;
 }
 
-#mpd.paused {
-    background-color: #51a37a;
+#backlight {
+    color: @cyan;
 }
 
-#language {
-    background: #00b093;
-    color: #740864;
-    padding: 0 5px;
-    margin: 0 5px;
-    min-width: 16px;
+#network {
+    color: @cyan;
 }
 
-#keyboard-state {
-    background: #97e1ad;
-    color: #000000;
-    padding: 0 0px;
-    margin: 0 5px;
-    min-width: 16px;
+#network.disconnected {
+    color: @red;
 }
 
-#keyboard-state > label {
-    padding: 0 5px;
+#pulseaudio {
+    color: @accent;
 }
 
-#keyboard-state > label.locked {
-    background: rgba(0, 0, 0, 0.2);
+#pulseaudio.muted {
+    color: @red;
 }
 
-#scratchpad {
-    background: rgba(0, 0, 0, 0.2);
+#wireplumber {
+    color: @green;
 }
 
-#scratchpad.empty {
-	background-color: transparent;
+#wireplumber.muted {
+    color: @red;
 }
 
-#privacy {
-    padding: 0;
+/* ── tooltip ─────────────────────────────────────────────── */
+tooltip {
+    background-color: #16161e;
+    border: 1px solid @border;
+    border-radius: 10px;
 }
 
-#privacy-item {
-    padding: 0 5px;
-    color: white;
-}
-
-#privacy-item.screenshare {
-    background-color: #cf5700;
-}
-
-#privacy-item.audio-in {
-    background-color: #1ca000;
-}
-
-#privacy-item.audio-out {
-    background-color: #0069d4;
+tooltip label {
+    color: @fg;
+    font-size: 12px;
 }

@@ -54,7 +54,7 @@
     "tooltip-format": "{app}: {title}"
   },
   "mpd": {
-    "format": "{stateIcon} {consumeIcon}{randomIcon}{repeatIcon}{singleIcon}{artist} - {album} - {title} ({elapsedTime:%M:%S}/{totalTime:%M:%S}) ⸨{songPosition}|{queueLength}⸩ {volume}% ",
+    "format": "{stateIcon} {artist} - {title}  {elapsedTime:%M:%S}/{totalTime:%M:%S}  {volume}% ",
     "format-disconnected": "Disconnected ",
     "format-stopped": "{consumeIcon}{randomIcon}{repeatIcon}{singleIcon}Stopped ",
     "unknown-tag": "N/A",
@@ -91,7 +91,7 @@
   },
   "clock": {
     "interval": 60,
-    "format": "{:%a %b %d %Y  %I:%M %p}",
+    "format": "{:%a %d %b  %I:%M %p}",
     "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
     "format-alt": "{:%Y-%m-%d}"
   },
@@ -176,7 +176,7 @@
     "exec": "$HOME/.config/waybar/mediaplayer.py 2> /dev/null"
   },
   "custom/wlogout": {
-    "format": "⏻ ",
+    "format": "⏻",
     "tooltip": "Power Menu",
     "on-click": "wlogout"
   },
