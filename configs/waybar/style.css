@@ -117,6 +117,37 @@ button:hover {
 	letter-spacing: 0.5px;
 }
 
+#custom-chrome {
+    padding: 0 6px;
+    color: #f7768e;
+    background-color: #162035;
+    border-radius: 6px;
+    margin: 0 2px;
+}
+
+#custom-vscode {
+    padding: 0 6px;
+    color: #7dcfff;
+    background-color: #162035;
+    border-radius: 6px;
+    margin: 0 2px;
+}
+
+#custom-chrome:hover {
+    color: #1e1e2e;
+    background-color: #f7768e;
+}
+
+#custom-vscode:hover {
+    color: #1e1e2e;
+    background-color: #7dcfff;
+}
+
+#custom-sep {
+    border-left: 1px solid #2a3b5f;
+    margin: 0 8px 0 10px;
+}
+
 #battery {
     color: #bb9af7;
 }

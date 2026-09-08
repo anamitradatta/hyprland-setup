@@ -8,6 +8,9 @@
     "custom/media"
   ],
   "modules-center": [
+    "custom/chrome",
+    "custom/vscode",
+    "custom/sep",
     "clock"
   ],
   "modules-right": [
@@ -175,6 +178,21 @@
     "format": "⏻ ",
     "tooltip": "Power Menu",
     "on-click": "wlogout"
+  },
+  "custom/chrome": {
+    "format": "",
+    "tooltip": "Google Chrome",
+    "on-click": "google-chrome-stable",
+    "on-click-right": "google-chrome-stable --incognito"
+  },
+  "custom/vscode": {
+    "format": "",
+    "tooltip": "Visual Studio Code",
+    "on-click": "code"
+  },
+  "custom/sep": {
+    "format": " ",
+    "tooltip": false
   }
 }
 
