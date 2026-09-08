@@ -140,7 +140,8 @@
   "network": {
     "format-wifi": "{essid} ({signalStrength}%) ",
     "format-ethernet": "{ipaddr}/{cidr} ",
-    "tooltip-format": "{ifname}: {ipaddr} via {gwaddr}",
+    "interval": 5,
+    "tooltip-format": "{ifname}: {ipaddr} via {gwaddr}\n\u2193 {bandwidthDownBytes}  \u2191 {bandwidthUpBytes}",
     "format-linked": "{ifname} (No IP) ",
     "format-disconnected": "Disconnected ⚠",
     "format-alt": "{ifname}: {ipaddr}/{cidr}"
