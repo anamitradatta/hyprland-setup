@@ -320,6 +320,7 @@ install_pacman_packages()
 		strace
 		inotify-tools
 		wl-clipboard
+		opencode
 		alsa-utils
 	)
 
