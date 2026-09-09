@@ -16,7 +16,7 @@
 @define-color on_acc   #16161e;
 
 * {
-    font-family: "JetBrains Mono", monospace;
+    font-family: "Fira Code", "JetBrains Mono", monospace;
     font-size: 13px;
     min-height: 0;
     padding: 0;
