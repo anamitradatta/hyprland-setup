@@ -24,6 +24,8 @@ ENABLE_DEBUG=false
 #################### CONSTANTS ####################
 
 USR_LOCAL_BIN=/usr/local/bin
+SDDM_CONF_DIR=/etc/sddm.conf.d
+SDDM_AUTOLOGIN_LOCAL_CONF_FILE=$SDDM_CONF_DIR/autologin.conf
 HOME_CONFIG_DIR=$HOME/.config
 HYPRLAND_CONFIG_DIR=$HOME_CONFIG_DIR/hypr
 LOCAL_SHARE_DIR=$HOME/.local/share
@@ -87,6 +89,10 @@ CUSTOM_WOFI_STYLE_CSS_FILE=$CUSTOM_WOFI_CONFIG_DIR/style.css
 CUSTOM_WIREPLUMBER_CONFIG_DIR=$CUSTOM_CONFIGS_DIR/wireplumber
 CUSTOM_WIREPLUMBER_LUA_CONFIG_DIR=$CUSTOM_WIREPLUMBER_CONFIG_DIR/main.lua.d
 CUSTOM_WIREPLUMBER_HDMI_AUTO_SWITCH_RULE=$CUSTOM_WIREPLUMBER_LUA_CONFIG_DIR/51-hdmi-auto-switch.lua
+
+# SDDM configuration
+CUSTOM_SDDM_CONFIG_DIR=$CUSTOM_CONFIGS_DIR/sddm
+CUSTOM_SDDM_AUTOLOGIN_CONF_FILE=$CUSTOM_SDDM_CONFIG_DIR/autologin.conf
 
 # Custom fonts
 CUSTOM_FONTS_DIR=$(pwd)/fonts
@@ -322,6 +328,10 @@ install_pacman_packages()
 		wl-clipboard
 		opencode
 		alsa-utils
+		hyprlock
+		hypridle
+		hyprpaper
+		sddm
 	)
 
 	for pkg in "${PACKAGES[@]}"; do
@@ -421,9 +431,6 @@ install_yay_packages()
     log "Installing yay packages..."
 
 	PACKAGES=(
-		hyprlock
-		hypridle
-		hyprpaper
 		wlogout
 		google-chrome
 	)
@@ -512,6 +519,20 @@ set_up_lock_handle_lid_switch()
 		log_success "Updated HandleLidSwitch to lock in $LOGIND_CONF"
 		return 0
 	fi
+}
+
+set_up_sddm_autologin()
+{
+	log_debug "Setting up SDDM autologin"
+
+	if [[ ! -d $SDDM_CONF_DIR ]]; then
+		log_debug "SDDM configuration directory does not exist. Creating..."
+		make_directory "$SDDM_CONF_DIR" "root" "755"
+	fi
+
+	set_up_config_file $CUSTOM_SDDM_AUTOLOGIN_CONF_FILE $SDDM_CONF_DIR
+
+	log_success "Set up SDDM autologin in $SDDM_AUTOLOGIN_LOCAL_CONF_FILE"
 }
 
 set_up_waybar_config()
@@ -630,6 +651,9 @@ set_up_configurations()
 	set_up_config_file $CUSTOM_HYPRLOCK_CONFIG_FILE $HYPRLAND_CONFIG_DIR
 	log_success "Set up hyprlock config"
 	set_up_lock_handle_lid_switch
+
+	# sddm autologin
+	set_up_sddm_autologin
 
 	# hypridle conf
 	set_up_config_file $CUSTOM_HYPRIDLE_CONFIG_FILE $HYPRLAND_CONFIG_DIR
@@ -761,6 +785,7 @@ enable_services()
 	log "Enabling services..."
 	enable_service "docker"
 	enable_service "sshd"
+	enable_service "sddm"
 }
 
 #################### MAIN ####################
