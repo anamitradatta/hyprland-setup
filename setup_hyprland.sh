@@ -71,6 +71,7 @@ CUSTOM_KITTY_THEME_FILE=$CUSTOM_KITTY_CONFIG_DIR/current-theme.conf
 # Hyprland configurations
 CUSTOM_HYPRLAND_CONFIG_DIR=$CUSTOM_CONFIGS_DIR/hyprland
 CUSTOM_HYPRLAND_CONFIG_FILE=$CUSTOM_HYPRLAND_CONFIG_DIR/hyprland.conf
+CUSTOM_HYPRLAND_LUA_CONFIG_FILE=$CUSTOM_HYPRLAND_CONFIG_DIR/hyprland.lua
 CUSTOM_HYPRLOCK_CONFIG_FILE=$CUSTOM_HYPRLAND_CONFIG_DIR/hyprlock.conf
 CUSTOM_HYPRIDLE_CONFIG_FILE=$CUSTOM_HYPRLAND_CONFIG_DIR/hypridle.conf
 CUSTOM_HYPRPAPER_CONFIG_FILE=$CUSTOM_HYPRLAND_CONFIG_DIR/hyprpaper.conf
@@ -643,9 +644,9 @@ set_up_configurations()
 	change_shell_to_zsh
 
 	log "Setting up custom hyprland configurations..."
-	# hyprland conf
-	set_up_config_file $CUSTOM_HYPRLAND_CONFIG_FILE $HYPRLAND_CONFIG_DIR
-	log_success "Set up hyprland config"
+	# hyprland lua config (hyprlang dropped; Lua is the current config language)
+	set_up_config_file $CUSTOM_HYPRLAND_LUA_CONFIG_FILE $HYPRLAND_CONFIG_DIR
+	log_success "Set up hyprland lua config"
 
 	# hyprlock conf
 	set_up_config_file $CUSTOM_HYPRLOCK_CONFIG_FILE $HYPRLAND_CONFIG_DIR
