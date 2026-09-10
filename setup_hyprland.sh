@@ -648,6 +648,10 @@ set_up_configurations()
 	set_up_config_file $CUSTOM_HYPRLAND_LUA_CONFIG_FILE $HYPRLAND_CONFIG_DIR
 	log_success "Set up hyprland lua config"
 
+	# hyprland conf fallback (used if the lua config fails to load)
+	set_up_config_file $CUSTOM_HYPRLAND_CONFIG_FILE $HYPRLAND_CONFIG_DIR
+	log_success "Set up hyprland conf fallback"
+
 	# hyprlock conf
 	set_up_config_file $CUSTOM_HYPRLOCK_CONFIG_FILE $HYPRLAND_CONFIG_DIR
 	log_success "Set up hyprlock config"
