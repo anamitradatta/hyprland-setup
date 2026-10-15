@@ -144,7 +144,7 @@
     "tooltip-format": "{ifname}: {ipaddr} via {gwaddr}\n\u2193 {bandwidthDownBytes}  \u2191 {bandwidthUpBytes}",
     "format-linked": "{ifname} (No IP) ",
     "format-disconnected": "Disconnected ⚠",
-    "format-alt": "{ifname}: {ipaddr}/{cidr}"
+    "on-click": "iwgtk"
   },
   "pulseaudio": {
     "format": "{volume}% {icon} {format_source}",

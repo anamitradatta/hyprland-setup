@@ -310,6 +310,8 @@ install_pacman_packages()
 		pavucontrol
 		brightnessctl
 		curl
+		zip
+		unzip
 		p7zip
 		yazi
 		vim
@@ -434,6 +436,7 @@ install_yay_packages()
 	PACKAGES=(
 		wlogout
 		google-chrome
+		iwgtk
 	)
 
 	for pkg in "${PACKAGES[@]}"; do
