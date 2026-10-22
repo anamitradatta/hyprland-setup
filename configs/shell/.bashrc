@@ -24,6 +24,7 @@ alias hlconf='vim /home/gogol/.config/hypr/hyprland.conf'
 alias cdhlc='cd /home/gogol/.config/hypr' 
 alias wbj="vim /home/gogol/.config/waybar/config.jsonc"
 alias wbs="vim /home/gogol/.config/waybar/style.css"
+alias up="sudo pacman -Syu"
 
 function y() {
 	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
