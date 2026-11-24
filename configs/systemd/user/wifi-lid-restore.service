@@ -1,0 +1,12 @@
+[Unit]
+Description=Re-enable iwd Wi-Fi adapter after laptop lid is opened
+Documentation=man:iwctl(1)
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/scripts/wifi-lid-restore.sh
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

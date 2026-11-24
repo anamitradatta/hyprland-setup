@@ -39,12 +39,19 @@ LOCAL_WIREPLUMBER_CONFIG_DIR=$HOME_CONFIG_DIR/wireplumber
 LOCAL_WIREPLUMBER_LUA_CONFIG_DIR=$LOCAL_WIREPLUMBER_CONFIG_DIR/main.lua.d
 LOCAL_WALLPAPERS_DIR=$LOCAL_SHARE_DIR/wallpapers
 LOCAL_SCRIPTS_DIR=$USR_LOCAL_BIN/scripts
+LOCAL_USER_SCRIPTS_DIR=$HOME/.local/bin/scripts
+LOCAL_SYSTEMD_USER_DIR=$HOME_CONFIG_DIR/systemd/user
 
 # Scripts
 SCRIPTS_DIR=$(pwd)/scripts
 
 # Custom configurations
 CUSTOM_CONFIGS_DIR=$(pwd)/configs
+
+# Wi-Fi lid restore (iwd adapter re-enable on lid open)
+CUSTOM_WIFI_LID_RESTORE_SCRIPT=$SCRIPTS_DIR/wifi-lid-restore.sh
+CUSTOM_SYSTEMD_USER_CONFIG_DIR=$CUSTOM_CONFIGS_DIR/systemd/user
+CUSTOM_WIFI_LID_RESTORE_SERVICE=$CUSTOM_SYSTEMD_USER_CONFIG_DIR/wifi-lid-restore.service
 
 # Vim configuration
 CUSTOM_VIM_CONFIG_DIR=$CUSTOM_CONFIGS_DIR/vim
@@ -525,6 +532,66 @@ set_up_lock_handle_lid_switch()
 	fi
 }
 
+set_up_wifi_lid_restore()
+{
+	log_debug "Setting up Wi-Fi lid restore watcher"
+
+	if [[ ! -f "$CUSTOM_WIFI_LID_RESTORE_SCRIPT" ]]; then
+		log_warning "Cannot find $CUSTOM_WIFI_LID_RESTORE_SCRIPT. Skipping Wi-Fi lid restore setup"
+		return 0
+	fi
+
+	if [[ ! -f "$CUSTOM_WIFI_LID_RESTORE_SERVICE" ]]; then
+		log_warning "Cannot find $CUSTOM_WIFI_LID_RESTORE_SERVICE. Skipping Wi-Fi lid restore setup"
+		return 0
+	fi
+
+	if [[ -z "${SUDO_USER:-}" ]]; then
+		log_warning "SUDO_USER is not set. Skipping Wi-Fi lid restore setup"
+		return 0
+	fi
+
+	make_directory "$LOCAL_USER_SCRIPTS_DIR" "$SUDO_USER" "755"
+	make_directory "$LOCAL_SYSTEMD_USER_DIR" "$SUDO_USER" "755"
+
+	set_up_config_file "$CUSTOM_WIFI_LID_RESTORE_SCRIPT" "$LOCAL_USER_SCRIPTS_DIR"
+	set_up_config_file "$CUSTOM_WIFI_LID_RESTORE_SERVICE" "$LOCAL_SYSTEMD_USER_DIR"
+
+	chmod 755 "$LOCAL_USER_SCRIPTS_DIR/wifi-lid-restore.sh"
+	chown "$SUDO_USER":"$SUDO_USER" \
+		"$LOCAL_USER_SCRIPTS_DIR/wifi-lid-restore.sh" \
+		"$LOCAL_SYSTEMD_USER_DIR/wifi-lid-restore.service"
+
+	# iwd's D-Bus policy only allows root, wheel and network group members.
+	if ! id -nG "$SUDO_USER" | grep -qwE 'wheel|network'; then
+		log_warning "User '$SUDO_USER' is not in wheel/network; iwd power changes may be denied"
+	fi
+
+	local uid runtime
+	uid=$(id -u "$SUDO_USER")
+	runtime="/run/user/$uid"
+
+	# Enable for future logins only. Deliberately do not start it here so the
+	# setup script never touches the live network connection.
+	if runuser -u "$SUDO_USER" -- env \
+		XDG_RUNTIME_DIR="$runtime" \
+		DBUS_SESSION_BUS_ADDRESS="unix:path=$runtime/bus" \
+		systemctl --user daemon-reload; then
+		log_debug "Reloaded user systemd units for $SUDO_USER"
+	else
+		log_warning "Failed to reload user systemd units for $SUDO_USER"
+	fi
+
+	if runuser -u "$SUDO_USER" -- env \
+		XDG_RUNTIME_DIR="$runtime" \
+		DBUS_SESSION_BUS_ADDRESS="unix:path=$runtime/bus" \
+		systemctl --user enable wifi-lid-restore.service; then
+		log_success "Enabled Wi-Fi lid restore service for $SUDO_USER"
+	else
+		log_warning "Failed to enable Wi-Fi lid restore service"
+	fi
+}
+
 set_up_sddm_autologin()
 {
 	log_debug "Setting up SDDM autologin"
@@ -871,6 +938,7 @@ main()
 	add_scripts
 	add_wallpapers
 	set_up_configurations
+	set_up_wifi_lid_restore
 	install_fonts
 	enable_services
 	prompt_reboot
