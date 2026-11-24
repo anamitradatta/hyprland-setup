@@ -145,14 +145,14 @@ button:hover {
 
 /* ── shared module base ──────────────────────────────────── */
 #clock, #battery, #cpu, #memory, #disk, #temperature,
-#backlight, #network, #pulseaudio, #wireplumber, #custom-media,
+#backlight, #network, #pulseaudio, #wireplumber, #mpris,
 #tray, #mode, #idle_inhibitor, #scratchpad, #power-profiles-daemon,
-#mpd, #keyboard-state, #custom-wlogout {
+#keyboard-state, #custom-wlogout {
     padding: 0 10px;
     color: @fg;
 }
 
-#network:hover, #pulseaudio:hover, #mpd:hover, #cpu:hover,
+#network:hover, #pulseaudio:hover, #cpu:hover,
 #memory:hover, #temperature:hover, #backlight:hover,
 #power-profiles-daemon:hover {
     background-color: @pill;
@@ -253,34 +253,18 @@ button:hover {
     color: @green;
 }
 
-/* ── media / mpd (tinted text, no colour blocks) ─────────── */
-#custom-media {
+/* ── media (tinted text, no colour blocks) ───────────────── */
+#mpris {
     min-width: 0;
     color: @green;
 }
 
-#custom-media.custom-spotify {
+#mpris label.spotify {
     color: @green;
 }
 
-#custom-media.custom-vlc {
+#mpris label.vlc {
     color: @orange;
-}
-
-#mpd {
-    color: @mauve;
-}
-
-#mpd.disconnected {
-    color: @red;
-}
-
-#mpd.stopped {
-    color: @subfg;
-}
-
-#mpd.paused {
-    color: @cyan;
 }
 
 /* ── keyboard-state / scratchpad ─────────────────────────── */
