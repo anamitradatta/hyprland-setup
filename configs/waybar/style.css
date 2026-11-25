@@ -100,6 +100,15 @@ button:hover {
     color: @fg;
 }
 
+/* hover feedback for non-current workspaces (matches :not() specificity) */
+#workspaces button:not(.active):hover {
+    color: @accent;
+    background-color: alpha(@accent, 0.18);
+    border-color: alpha(@accent, 0.35);
+    border-radius: 999px;
+    opacity: 1;
+}
+
 /* workspace shown on another monitor */
 #workspaces button.visible {
     color: @accent;
@@ -123,6 +132,8 @@ button:hover {
 
 #workspaces button.urgent:hover {
     color: @red;
+    background-color: alpha(@red, 0.18);
+    border-color: alpha(@red, 0.35);
 }
 
 /* kill GTK's click-focus ring on workspace buttons */
