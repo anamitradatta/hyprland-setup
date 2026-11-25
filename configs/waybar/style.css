@@ -183,12 +183,13 @@ button:hover {
     transition-duration: 200ms;
 }
 
-#custom-chrome:hover {
+/* Waybar 0.16 sets :hover on the wrapper box, not the custom module label */
+box:hover > #custom-chrome {
     background-color: @red;
     color: @on_acc;
 }
 
-#custom-vscode:hover {
+box:hover > #custom-vscode {
     background-color: @cyan;
     color: @on_acc;
 }
@@ -205,7 +206,7 @@ button:hover {
     transition-duration: 200ms;
 }
 
-#custom-wlogout:hover {
+box:hover > #custom-wlogout {
     background-color: @red;
     color: @on_acc;
 }
