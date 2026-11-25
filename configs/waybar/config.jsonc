@@ -89,15 +89,23 @@
       "warning": 30,
       "critical": 15
     },
-    "format": "{capacity}% {icon}",
-    "format-full": "{capacity}% {icon}",
-    "format-charging": "{capacity}% ",
-    "format-plugged": "{capacity}% ",
-    "format-alt": "{time} {icon}",
-    "format-icons": ["", "", "", "", ""]
+    "format": "{capacity}% 🔋",
+    "format-full": "{capacity}% 🔋",
+    "format-charging": "{capacity}% 🔋",
+    "format-plugged": "{capacity}% 🔋"
+    // No format-alt here: click must not swap the label to time remaining.
+    // Tooltip stays at its default ({timeTo}), so hover still reports status.
   },
   "battery#bat2": {
-    "bat": "BAT2"
+    "bat": "BAT2",
+    "states": {
+      "warning": 30,
+      "critical": 15
+    },
+    "format": "{capacity}% 🔋",
+    "format-full": "{capacity}% 🔋",
+    "format-charging": "{capacity}% 🔋",
+    "format-plugged": "{capacity}% 🔋"
   },
   "power-profiles-daemon": {
     "format": "{icon}",
