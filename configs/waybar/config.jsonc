@@ -64,9 +64,10 @@
   },
   "clock": {
     "interval": 60,
-    "format": "{:%a %d %b  %I:%M %p}",
-    "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
-    "format-alt": "{:%Y-%m-%d}"
+    "format": "{:%a %d %b %Y  %I:%M %p %Z}",
+    "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+    // No format-alt here: click must not swap the label to the alternate date.
+    // Tooltip stays as-is, so hover still shows the month and calendar.
   },
   "cpu": {
     "format": "{usage}% ",
